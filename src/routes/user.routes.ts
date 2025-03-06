@@ -27,6 +27,7 @@ export async function userRoutes(fastify: FastifyInstance) {
                 properties: {
                   id: { type: 'string' },
                   username: { type: 'string' },
+                  email: { type: 'string' },
                   avatar: { type: 'string', nullable: true },
                   bio: { type: 'string', nullable: true },
                   createdAt: { type: 'string', format: 'date-time' },

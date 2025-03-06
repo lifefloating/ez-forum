@@ -1038,6 +1038,8 @@ paths:
                         type: string
                       username:
                         type: string
+                      email:
+                        type: string
                       avatar:
                         type: string
                         nullable: true
