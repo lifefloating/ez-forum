@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # 应用服务
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ez-forum-api
+    restart: always
+    ports:
+      - "3009:3009"
+    environment:
+      - NODE_ENV=production
+      - PORT=3009
+      - HOST=0.0.0.0
+      - DATABASE_URL=mongodb://mongo:27017/ez-forum
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=7d
+      - COS_SECRET_ID=${COS_SECRET_ID}
+      - COS_SECRET_KEY=${COS_SECRET_KEY}
+      - COS_REGION=${COS_REGION}
+      - COS_BUCKET=${COS_BUCKET}
+      - LOG_LEVEL=info
+    volumes:
+      - ./logs:/app/logs
+      - ./public:/app/public
+    depends_on:
+      - mongo
+    networks:
+      - ez-forum-network
+
+  # MongoDB服务
+  mongo:
+    image: mongo:latest
+    container_name: ez-forum-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ez-forum-network
+
+volumes:
+  mongo-data:
+
+networks:
+  ez-forum-network:
+    driver: bridge

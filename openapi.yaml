@@ -1,0 +1,1401 @@
+openapi: 3.1.0
+info:
+  title: EZ-Forum API
+  description: EZ-Forum API
+  version: 1.0.0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas: {}
+paths:
+  /api/auth/register:
+    post:
+      summary: 用户注册
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+        required: true
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          email:
+                            type: string
+                          role:
+                            type: string
+                      token:
+                        type: string
+  /api/auth/login:
+    post:
+      summary: 用户登录
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          email:
+                            type: string
+                          role:
+                            type: string
+                      token:
+                        type: string
+  /api/auth/me:
+    get:
+      summary: 获取当前登录用户信息
+      tags:
+        - auth
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      avatar:
+                        type: string
+                        nullable: true
+                      bio:
+                        type: string
+                        nullable: true
+  /api/auth/logout:
+    post:
+      summary: 退出登录
+      tags:
+        - auth
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/posts/:
+    get:
+      summary: 获取帖子列表
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            title:
+                              type: string
+                            content:
+                              type: string
+                            images:
+                              type: array
+                              items:
+                                type: string
+                            views:
+                              type: integer
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            commentCount:
+                              type: integer
+                            likeCount:
+                              type: integer
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+    post:
+      summary: 创建新帖子
+      tags:
+        - posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      images:
+                        type: array
+                        items:
+                          type: string
+                      views:
+                        type: integer
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      authorId:
+                        type: string
+  /api/posts/{id}:
+    get:
+      summary: 获取单个帖子详情
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      images:
+                        type: array
+                        items:
+                          type: string
+                      views:
+                        type: integer
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      authorId:
+                        type: string
+                      author:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          avatar:
+                            type: string
+                            nullable: true
+                      commentCount:
+                        type: integer
+                      likeCount:
+                        type: integer
+    put:
+      summary: 更新帖子
+      tags:
+        - posts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      images:
+                        type: array
+                        items:
+                          type: string
+                      views:
+                        type: integer
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      authorId:
+                        type: string
+    delete:
+      summary: 删除帖子
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/posts/{id}/like:
+    post:
+      summary: 点赞帖子
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+    delete:
+      summary: 取消点赞帖子
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/posts/user/{userId}:
+    get:
+      summary: 获取用户的帖子列表
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+        - schema:
+            type: string
+          in: path
+          name: userId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            title:
+                              type: string
+                            content:
+                              type: string
+                            images:
+                              type: array
+                              items:
+                                type: string
+                            views:
+                              type: integer
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            commentCount:
+                              type: integer
+                            likeCount:
+                              type: integer
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+  /api/posts/liked:
+    get:
+      summary: 获取用户点赞的帖子列表
+      tags:
+        - posts
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            title:
+                              type: string
+                            content:
+                              type: string
+                            images:
+                              type: array
+                              items:
+                                type: string
+                            views:
+                              type: integer
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            commentCount:
+                              type: integer
+                            likeCount:
+                              type: integer
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+  /api/comments/post/{postId}:
+    get:
+      summary: 获取帖子的评论列表
+      tags:
+        - comments
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+        - schema:
+            type: string
+          in: path
+          name: postId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            content:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            authorId:
+                              type: string
+                            postId:
+                              type: string
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+    post:
+      summary: 创建评论
+      tags:
+        - comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: postId
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      content:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      authorId:
+                        type: string
+                      postId:
+                        type: string
+                      author:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          avatar:
+                            type: string
+                            nullable: true
+  /api/comments/{id}:
+    put:
+      summary: 更新评论
+      tags:
+        - comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      content:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      authorId:
+                        type: string
+                      postId:
+                        type: string
+                      author:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          avatar:
+                            type: string
+                            nullable: true
+    delete:
+      summary: 删除评论
+      tags:
+        - comments
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/comments/me:
+    get:
+      summary: 获取当前用户的评论列表
+      tags:
+        - comments
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            content:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            authorId:
+                              type: string
+                            postId:
+                              type: string
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            post:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                title:
+                                  type: string
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+  /api/users/{id}:
+    get:
+      summary: 获取用户信息
+      tags:
+        - users
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                      avatar:
+                        type: string
+                        nullable: true
+                      bio:
+                        type: string
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+  /api/users/profile:
+    put:
+      summary: 更新用户信息
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                bio:
+                  type: string
+                avatar:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      avatar:
+                        type: string
+                        nullable: true
+                      bio:
+                        type: string
+                        nullable: true
+  /api/uploads/:
+    post:
+      summary: 上传文件
+      tags:
+        - uploads
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      filename:
+                        type: string
+                      mimetype:
+                        type: string
+  /api/admin/posts:
+    get:
+      summary: 获取所有帖子（管理员）
+      tags:
+        - admin
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: keyword
+          required: false
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            title:
+                              type: string
+                            content:
+                              type: string
+                            images:
+                              type: array
+                              items:
+                                type: string
+                            views:
+                              type: integer
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            commentCount:
+                              type: integer
+                            likeCount:
+                              type: integer
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+  /api/admin/posts/{id}:
+    delete:
+      summary: 删除帖子（管理员）
+      tags:
+        - admin
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+  /api/admin/users:
+    get:
+      summary: 获取所有用户（管理员）
+      tags:
+        - admin
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+          in: query
+          name: order
+          required: false
+        - schema:
+            type: string
+          in: query
+          name: keyword
+          required: false
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            username:
+                              type: string
+                            email:
+                              type: string
+                            role:
+                              type: string
+                            avatar:
+                              type: string
+                              nullable: true
+                            createdAt:
+                              type: string
+                              format: date-time
+                            _count:
+                              type: object
+                              properties:
+                                posts:
+                                  type: integer
+                                comments:
+                                  type: integer
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
+  /api/admin/users/{id}/role:
+    put:
+      summary: 更新用户角色（管理员）
+      tags:
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - USER
+                    - ADMIN
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: path
+          name: id
+          required: true
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+  /health:
+    get:
+      responses:
+        "200":
+          description: Default Response
+servers:
+  - url: http://localhost:3009
+    description: 开发服务器
+tags:
+  - name: auth
+    description: 认证相关接口
+  - name: posts
+    description: 帖子相关接口
+  - name: comments
+    description: 评论相关接口
+  - name: users
+    description: 用户相关接口
+  - name: uploads
+    description: 文件上传相关接口
+  - name: admin
+    description: 管理后台相关接口
+externalDocs:
+  url: https://github.com/lifefloating/ez-forum
+  description: 项目代码仓库
