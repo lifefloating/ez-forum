@@ -38,16 +38,13 @@ cat > ecosystem.config.js << EOF
 module.exports = {
   apps: [{
     name: "ez-forum",
-    script: "node_modules/.bin/tsx",
-    args: "-r dotenv/config src/index.ts",
+    script: "pnpm",
+    args: "dev",
+    cwd: "./",
     instances: 1,
     autorestart: true,
     watch: false,
     max_memory_restart: "1G",
-    env: {
-      NODE_ENV: "development",
-      PORT: 3009
-    }
   }]
 }
 EOF
