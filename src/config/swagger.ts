@@ -15,7 +15,7 @@ export const swaggerOptions: SwaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 3009}`,
+        url: `http://${process.env.HOST || '0.0.0.0'}:${process.env.PORT || 3009}`,
         description: '开发服务器',
       },
     ],
