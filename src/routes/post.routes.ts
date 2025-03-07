@@ -17,6 +17,11 @@ export async function postRoutes(fastify: FastifyInstance) {
             limit: { type: 'integer', default: 10 },
             sort: { type: 'string', default: 'createdAt' },
             order: { type: 'string', enum: ['asc', 'desc'], default: 'desc' },
+            filter: {
+              type: 'string',
+              enum: ['latest', 'my', 'liked', 'hot'],
+              description: '过滤类型：最新发布、热门推荐、我发布的、我点赞的',
+            },
           },
         },
         response: {

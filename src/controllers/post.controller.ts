@@ -14,14 +14,37 @@ export const postController = {
    * 获取帖子列表
    */
   async getPosts(request: FastifyRequest<{ Querystring: PaginationQuery }>, reply: FastifyReply) {
-    const { page = 1, limit = 10, sort = 'createdAt', order = 'desc' } = request.query;
+    const { page = 1, limit = 10, sort = 'createdAt', order = 'desc', filter } = request.query;
+    const userId = request.user?.id;
 
-    const result = await postService.findPosts({
-      page: Number(page),
-      limit: Number(limit),
-      sort,
-      order,
-    });
+    // 根据过滤类型调用不同的服务方法
+    let result;
+    if (filter === 'my' && userId) {
+      // 我发布的帖子
+      result = await postService.findUserPosts(userId, {
+        page: Number(page),
+        limit: Number(limit),
+        sort,
+        order,
+      });
+    } else if (filter === 'liked' && userId) {
+      // 我点赞的帖子
+      result = await postService.findUserLikedPosts(userId, {
+        page: Number(page),
+        limit: Number(limit),
+        sort,
+        order,
+      });
+    } else {
+      // 默认或最新发布
+      result = await postService.findPosts({
+        page: Number(page),
+        limit: Number(limit),
+        sort,
+        order,
+        filter,
+      });
+    }
 
     return reply.send(formatSuccessResponse(result));
   },

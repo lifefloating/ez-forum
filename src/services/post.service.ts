@@ -7,34 +7,118 @@ const prisma = new PrismaClient();
 
 export const postService = {
   /**
+   * 获取热门帖子列表
+   * 按照点赞数量 + 评论数量的总和排序
+   */
+  async findHotPosts(options: PaginationQuery) {
+    const { page = 1, limit = 10 } = options;
+    const skip = (page - 1) * limit;
+
+    // 创建包含选项
+    const includeOptions = {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+        },
+      },
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+        },
+      },
+    };
+
+    // 获取所有帖子及其点赞数和评论数
+    const [posts, total] = await Promise.all([
+      prisma.post.findMany({
+        include: includeOptions,
+      }),
+      prisma.post.count(),
+    ]);
+
+    // 计算热度分数（点赞数 + 评论数）并排序
+    const sortedPosts = posts
+      .map((post) => ({
+        ...post,
+        hotScore: post._count.likes + post._count.comments,
+      }))
+      .sort((a, b) => b.hotScore - a.hotScore) // 按热度分数降序排序
+      .slice(skip, skip + limit); // 分页
+
+    // 格式化返回数据
+    const formattedPosts = sortedPosts.map((post) => ({
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      images: post.images,
+      views: post.views,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      author: post.author,
+      commentCount: post._count.comments,
+      likeCount: post._count.likes,
+    }));
+
+    return {
+      items: formattedPosts,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  },
+  /**
    * 获取帖子列表
    */
   async findPosts(options: PaginationQuery) {
-    const { page = 1, limit = 10, sort = 'createdAt', order = 'desc' } = options;
+    const { page = 1, limit = 10, sort = 'createdAt', order = 'desc', filter } = options;
     const skip = (page - 1) * limit;
+
+    // 根据过滤类型设置不同的查询条件
+    let orderByOptions = {};
+    let includeOptions = {
+      author: {
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+        },
+      },
+      _count: {
+        select: {
+          comments: true,
+          likes: true,
+        },
+      },
+    };
+
+    // 如果是最新发布，强制按创建时间降序排序
+    if (filter === 'latest') {
+      orderByOptions = {
+        createdAt: 'desc',
+      };
+    }
+    // 如果是热门推荐，按点赞数量和评论数量的总和排序
+    else if (filter === 'hot') {
+      // 热门推荐需要特殊处理，因为我们需要基于评论数和点赞数的总和排序
+      // 这里我们需要先获取所有帖子，然后在内存中排序
+      return this.findHotPosts(options);
+    } else {
+      // 其他情况下使用用户指定的排序
+      orderByOptions = {
+        [sort]: order,
+      };
+    }
 
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         skip,
         take: limit,
-        orderBy: {
-          [sort]: order,
-        },
-        include: {
-          author: {
-            select: {
-              id: true,
-              username: true,
-              avatar: true,
-            },
-          },
-          _count: {
-            select: {
-              comments: true,
-              likes: true,
-            },
-          },
-        },
+        orderBy: orderByOptions,
+        include: includeOptions,
       }),
       prisma.post.count(),
     ]);

@@ -100,6 +100,7 @@ export interface PaginationQuery {
   limit?: number;
   sort?: string;
   order?: 'asc' | 'desc';
+  filter?: 'latest' | 'my' | 'liked' | 'hot';
 }
 
 export interface PaginatedResult<T> {

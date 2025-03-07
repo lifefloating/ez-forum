@@ -271,6 +271,17 @@ paths:
           in: query
           name: order
           required: false
+        - schema:
+            type: string
+            enum:
+              - latest
+              - my
+              - liked
+              - hot
+          in: query
+          name: filter
+          required: false
+          description: 过滤类型：最新发布、热门推荐、我发布的、我点赞的
       responses:
         "200":
           description: Default Response
