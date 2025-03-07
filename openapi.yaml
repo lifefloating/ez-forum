@@ -2,14 +2,78 @@ openapi: 3.1.0
 info:
   title: EZ-Forum API
   description: EZ-Forum API
-  version: 1.1.0
+  version: 1.0.0
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-  schemas: {}
+  schemas:
+    def-0:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - error
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - authentication_error
+                - permission_error
+                - invalid_request_error
+                - resource_error
+                - rate_limit_error
+                - api_error
+                - server_error
+            errorCode:
+              type: string
+              enum:
+                - invalid_credentials
+                - expired_token
+                - invalid_token
+                - missing_token
+                - insufficient_permissions
+                - forbidden_action
+                - resource_not_found
+                - resource_already_exists
+                - resource_deleted
+                - resource_conflict
+                - invalid_parameters
+                - missing_required_field
+                - invalid_format
+                - value_too_long
+                - value_too_short
+                - invalid_file_type
+                - file_too_large
+                - operation_not_allowed
+                - internal_server_error
+                - service_unavailable
+                - database_error
+                - timeout
+                - too_many_requests
+                - unsupported_api_version
+                - unsupported_operation
+            status:
+              type: integer
+            param:
+              type: string
+          required:
+            - type
+            - errorCode
+            - status
+      required:
+        - code
+        - message
+        - data
+      description: 错误响应格式
+      title: ErrorResponse
 paths:
   /api/auth/register:
     post:
@@ -43,8 +107,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -89,8 +157,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -122,8 +194,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -154,10 +230,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
   /api/posts/:
     get:
       summary: 获取帖子列表
@@ -199,8 +279,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -281,8 +365,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -325,8 +413,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -398,8 +490,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -443,10 +539,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
   /api/posts/{id}/like:
     post:
       summary: 点赞帖子
@@ -468,10 +568,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
     delete:
       summary: 取消点赞帖子
       tags:
@@ -492,10 +596,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
   /api/posts/user/{userId}:
     get:
       summary: 获取用户的帖子列表
@@ -542,8 +650,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -635,8 +747,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -731,8 +847,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -821,8 +941,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -924,8 +1048,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1006,8 +1134,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1055,10 +1187,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
   /api/comments/me:
     get:
       summary: 获取当前用户的评论列表
@@ -1102,8 +1238,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1170,8 +1310,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1217,8 +1361,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1249,8 +1397,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1308,8 +1460,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1379,10 +1535,14 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
                   message:
                     type: string
+                  data:
+                    type: "null"
   /api/admin/users:
     get:
       summary: 获取所有用户（管理员）
@@ -1431,8 +1591,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
@@ -1505,8 +1669,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  code:
+                    type: string
+                    enum:
+                      - success
+                  message:
+                    type: string
                   data:
                     type: object
                     properties:
