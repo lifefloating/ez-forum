@@ -21,20 +21,42 @@ export const PrismaPlugin: FastifyPluginAsync = fp(async (fastify) => {
 
   try {
     logger.info('正在连接到MongoDB...');
-    await prisma.$connect();
-    logger.info('MongoDB连接成功！');
 
-    // 测试数据库连接
+    // 设置连接超时
+    const connectPromise = prisma.$connect();
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('数据库连接超时')), 5000); // 5秒超时
+    });
+
+    // 等待连接或超时
+    await Promise.race([connectPromise, timeoutPromise]);
+
+    // 测试数据库连接是否真正可用
     try {
       const result = await prisma.$runCommandRaw({ ping: 1 });
-      logger.info(`数据库连接测试结果: ${JSON.stringify(result)}`);
+      if (result && result.ok === 1) {
+        logger.info('MongoDB连接成功！');
+        logger.info(`数据库连接测试结果: ${JSON.stringify(result)}`);
+      } else {
+        throw new Error(`数据库连接测试失败: ${JSON.stringify(result)}`);
+      }
     } catch (pingError) {
       logger.error(
         `数据库连接测试失败: ${pingError instanceof Error ? pingError.message : String(pingError)}`,
       );
+      // 重新抛出错误，以便插件注册失败
+      throw pingError;
     }
   } catch (error) {
     logger.error(`MongoDB连接失败: ${error instanceof Error ? error.message : String(error)}`);
+    // 确保在连接失败时断开任何可能已建立的连接
+    try {
+      await prisma.$disconnect();
+    } catch (disconnectError) {
+      logger.error(
+        `断开连接时出错: ${disconnectError instanceof Error ? disconnectError.message : String(disconnectError)}`,
+      );
+    }
     throw error;
   }
 
