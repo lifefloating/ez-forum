@@ -105,7 +105,7 @@ export const registerErrorResponseSchema = (app: any): void => {
   // 添加错误码文档到 OpenAPI 文档
   if (app.swagger) {
     const errorDocsTag = {
-      name: '错误码',
+      name: '错误处理',
       description: '# API 错误码说明\n\n所有 API 错误响应都遵循统一格式，详见错误响应 schema。',
     };
 
