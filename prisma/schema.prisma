@@ -58,6 +58,13 @@ model Comment {
   postId String @db.ObjectId
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  // 父评论ID，可以为空（表示顶级评论）
+  parentId String? @db.ObjectId
+  // 父评论关系
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  // 子评论（回复）
+  replies  Comment[] @relation("CommentReplies")
+
   @@map("comments")
 }
 

@@ -685,6 +685,96 @@ paths:
                         type: integer
                       totalPages:
                         type: integer
+  /api/comments/{commentId}/replies:
+    get:
+      summary: 获取评论的回复列表
+      tags:
+        - comments
+      parameters:
+        - schema:
+            type: integer
+            default: 1
+          in: query
+          name: page
+          required: false
+        - schema:
+            type: integer
+            default: 10
+          in: query
+          name: limit
+          required: false
+        - schema:
+            type: string
+            default: createdAt
+          in: query
+          name: sort
+          required: false
+        - schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+          in: query
+          name: order
+          required: false
+        - schema:
+            type: string
+          in: path
+          name: commentId
+          required: true
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            content:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                            authorId:
+                              type: string
+                            postId:
+                              type: string
+                            parentId:
+                              type: string
+                            author:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalPages:
+                        type: integer
   /api/comments/post/{postId}:
     get:
       summary: 获取帖子的评论列表
@@ -755,6 +845,9 @@ paths:
                               type: string
                             postId:
                               type: string
+                            parentId:
+                              type: string
+                              nullable: true
                             author:
                               type: object
                               properties:
@@ -765,6 +858,30 @@ paths:
                                 avatar:
                                   type: string
                                   nullable: true
+                            replies:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                  content:
+                                    type: string
+                                  createdAt:
+                                    type: string
+                                    format: date-time
+                                  authorId:
+                                    type: string
+                                  author:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                      username:
+                                        type: string
+                                      avatar:
+                                        type: string
+                                        nullable: true
                       total:
                         type: integer
                       page:
@@ -787,6 +904,9 @@ paths:
               properties:
                 content:
                   type: string
+                parentId:
+                  type: string
+                  description: 父评论ID，用于回复评论
         required: true
       parameters:
         - schema:
@@ -823,6 +943,9 @@ paths:
                         type: string
                       postId:
                         type: string
+                      parentId:
+                        type: string
+                        nullable: true
                       author:
                         type: object
                         properties:
@@ -833,6 +956,24 @@ paths:
                           avatar:
                             type: string
                             nullable: true
+                      parent:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: string
+                          content:
+                            type: string
+                          author:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              username:
+                                type: string
+                              avatar:
+                                type: string
+                                nullable: true
   /api/comments/{id}:
     put:
       summary: 更新评论
@@ -1383,7 +1524,7 @@ paths:
         "200":
           description: Default Response
 servers:
-  - url: http://localhost:3009
+  - url: http://0.0.0.0:3009
     description: 开发服务器
 tags:
   - name: auth

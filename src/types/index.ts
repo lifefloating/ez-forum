@@ -30,6 +30,18 @@ declare module '@fastify/jwt' {
   }
 }
 
+// 定义请求类型的辅助类型
+export type RequestParams = Record<string, any>;
+export type RequestQuery = Record<string, any>;
+export type RequestBody = Record<string, any>;
+
+// 定义TypedRequest类型，用于控制器函数的类型提示
+export interface TypedRequest<T = any> extends FastifyRequest {
+  params: T extends { Params: infer P } ? P : RequestParams;
+  query: T extends { Querystring: infer Q } ? Q : RequestQuery;
+  body: T extends { Body: infer B } ? B : RequestBody;
+}
+
 // 定义各种API请求和响应的类型
 export interface RegisterRequest {
   username: string;
@@ -56,6 +68,7 @@ export interface UpdatePostRequest {
 
 export interface CreateCommentRequest {
   content: string;
+  parentId?: string; // 父评论ID，用于回复评论
 }
 
 export interface UpdateUserRequest {
@@ -77,14 +90,30 @@ export interface PaginationQuery {
   order?: 'asc' | 'desc';
 }
 
-export interface TypedRequest<T> extends FastifyRequest {
-  body: T;
-}
-
 export interface PaginatedResult<T> {
   items: T[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
+}
+
+// Comment 相关接口
+export interface CommentAuthor {
+  id: string;
+  username: string;
+  avatar: string | null;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  authorId: string;
+  postId: string;
+  parentId: string | null;
+  author?: CommentAuthor;
+  replies?: Comment[];
+  parent?: Comment;
 }

@@ -3,6 +3,73 @@ import { commentController } from '../controllers/comment.controller';
 import { authenticate } from '../middlewares/auth';
 
 export async function commentRoutes(fastify: FastifyInstance) {
+  // 获取评论的回复列表
+  fastify.get(
+    '/:commentId/replies',
+    {
+      schema: {
+        tags: ['comments'],
+        summary: '获取评论的回复列表',
+        params: {
+          type: 'object',
+          required: ['commentId'],
+          properties: {
+            commentId: { type: 'string' },
+          },
+        },
+        querystring: {
+          type: 'object',
+          properties: {
+            page: { type: 'integer', default: 1 },
+            limit: { type: 'integer', default: 10 },
+            sort: { type: 'string', default: 'createdAt' },
+            order: { type: 'string', enum: ['asc', 'desc'], default: 'asc' },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              success: { type: 'boolean' },
+              data: {
+                type: 'object',
+                properties: {
+                  items: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string' },
+                        content: { type: 'string' },
+                        createdAt: { type: 'string', format: 'date-time' },
+                        updatedAt: { type: 'string', format: 'date-time' },
+                        authorId: { type: 'string' },
+                        postId: { type: 'string' },
+                        parentId: { type: 'string' },
+                        author: {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            username: { type: 'string' },
+                            avatar: { type: 'string', nullable: true },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  total: { type: 'integer' },
+                  page: { type: 'integer' },
+                  limit: { type: 'integer' },
+                  totalPages: { type: 'integer' },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    commentController.getCommentReplies,
+  );
   // 获取帖子的评论列表
   fastify.get(
     '/post/:postId',
@@ -45,12 +112,33 @@ export async function commentRoutes(fastify: FastifyInstance) {
                         updatedAt: { type: 'string', format: 'date-time' },
                         authorId: { type: 'string' },
                         postId: { type: 'string' },
+                        parentId: { type: 'string', nullable: true },
                         author: {
                           type: 'object',
                           properties: {
                             id: { type: 'string' },
                             username: { type: 'string' },
                             avatar: { type: 'string', nullable: true },
+                          },
+                        },
+                        replies: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              content: { type: 'string' },
+                              createdAt: { type: 'string', format: 'date-time' },
+                              authorId: { type: 'string' },
+                              author: {
+                                type: 'object',
+                                properties: {
+                                  id: { type: 'string' },
+                                  username: { type: 'string' },
+                                  avatar: { type: 'string', nullable: true },
+                                },
+                              },
+                            },
                           },
                         },
                       },
@@ -91,6 +179,7 @@ export async function commentRoutes(fastify: FastifyInstance) {
           required: ['content'],
           properties: {
             content: { type: 'string' },
+            parentId: { type: 'string', description: '父评论ID，用于回复评论' },
           },
         },
         response: {
@@ -107,12 +196,29 @@ export async function commentRoutes(fastify: FastifyInstance) {
                   updatedAt: { type: 'string', format: 'date-time' },
                   authorId: { type: 'string' },
                   postId: { type: 'string' },
+                  parentId: { type: 'string', nullable: true },
                   author: {
                     type: 'object',
                     properties: {
                       id: { type: 'string' },
                       username: { type: 'string' },
                       avatar: { type: 'string', nullable: true },
+                    },
+                  },
+                  parent: {
+                    type: 'object',
+                    nullable: true,
+                    properties: {
+                      id: { type: 'string' },
+                      content: { type: 'string' },
+                      author: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          username: { type: 'string' },
+                          avatar: { type: 'string', nullable: true },
+                        },
+                      },
                     },
                   },
                 },
