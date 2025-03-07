@@ -23,13 +23,15 @@ export const PrismaPlugin: FastifyPluginAsync = fp(async (fastify) => {
     logger.info('正在连接到MongoDB...');
     await prisma.$connect();
     logger.info('MongoDB连接成功！');
-    
+
     // 测试数据库连接
     try {
       const result = await prisma.$runCommandRaw({ ping: 1 });
       logger.info(`数据库连接测试结果: ${JSON.stringify(result)}`);
     } catch (pingError) {
-      logger.error(`数据库连接测试失败: ${pingError instanceof Error ? pingError.message : String(pingError)}`);
+      logger.error(
+        `数据库连接测试失败: ${pingError instanceof Error ? pingError.message : String(pingError)}`,
+      );
     }
   } catch (error) {
     logger.error(`MongoDB连接失败: ${error instanceof Error ? error.message : String(error)}`);
