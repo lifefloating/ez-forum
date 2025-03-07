@@ -1,8 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import crypto from 'crypto';
 import { LoginRequest, RegisterRequest } from '../types';
-import { ApiError } from '../middlewares/errorHandler';
+import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
 import { authService } from '../services/auth.service';
+import {
+  ERROR_TYPES,
+  AUTHENTICATION_ERROR_CODES,
+  REQUEST_ERROR_CODES,
+  RESOURCE_ERROR_CODES,
+} from '../types/errors';
 
 export const authController = {
   /**
@@ -18,12 +24,23 @@ export const authController = {
 
     // 验证用户输入
     if (!username || !email || !password) {
-      throw new ApiError(400, '用户名、邮箱和密码不能为空');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: '用户名、邮箱和密码不能为空',
+      });
     }
 
     // 密码长度验证
     if (password.length < 6) {
-      throw new ApiError(400, '密码长度不能少于6个字符');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.VALUE_TOO_SHORT,
+        message: '密码长度不能少于6个字符',
+        param: 'password',
+      });
     }
 
     // 创建用户
@@ -37,18 +54,20 @@ export const authController = {
       role: user.role,
     });
 
-    return reply.status(201).send({
-      success: true,
-      data: {
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+    return reply.status(201).send(
+      formatSuccessResponse(
+        {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+          token,
         },
-        token,
-      },
-    });
+        '用户注册成功',
+      ),
+    );
   },
 
   /**
@@ -64,13 +83,23 @@ export const authController = {
 
     // 验证用户输入
     if (!email || !password) {
-      throw new ApiError(400, '邮箱和密码不能为空');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: '邮箱和密码不能为空',
+      });
     }
 
     // 查找用户
     const user = await authService.findUserByEmail(email);
     if (!user) {
-      throw new ApiError(401, '邮箱或密码不正确');
+      throw new ApiError({
+        statusCode: 401,
+        type: ERROR_TYPES.AUTHENTICATION_ERROR,
+        code: AUTHENTICATION_ERROR_CODES.INVALID_CREDENTIALS,
+        message: '邮箱或密码不正确',
+      });
     }
 
     // 验证密码
@@ -80,7 +109,12 @@ export const authController = {
     const inputHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
     // 比较哈希值
     if (inputHash !== storedHash) {
-      throw new ApiError(401, '邮箱或密码不正确');
+      throw new ApiError({
+        statusCode: 401,
+        type: ERROR_TYPES.AUTHENTICATION_ERROR,
+        code: AUTHENTICATION_ERROR_CODES.INVALID_CREDENTIALS,
+        message: '邮箱或密码不正确',
+      });
     }
 
     // 生成JWT令牌
@@ -91,18 +125,20 @@ export const authController = {
       role: user.role,
     });
 
-    return reply.send({
-      success: true,
-      data: {
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
+    return reply.send(
+      formatSuccessResponse(
+        {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+          },
+          token,
         },
-        token,
-      },
-    });
+        '登录成功',
+      ),
+    );
   },
 
   /**
@@ -113,20 +149,24 @@ export const authController = {
     const user = await authService.findUserById(userId);
 
     if (!user) {
-      throw new ApiError(404, '用户不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '用户不存在',
+      });
     }
 
-    return reply.send({
-      success: true,
-      data: {
+    return reply.send(
+      formatSuccessResponse({
         id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
         avatar: user.avatar,
         bio: user.bio,
-      },
-    });
+      }),
+    );
   },
 
   /**
@@ -134,9 +174,6 @@ export const authController = {
    */
   async logout(_request: FastifyRequest, reply: FastifyReply) {
     // 由于使用JWT，服务端不需要做特殊处理，客户端只需要删除token即可
-    return reply.send({
-      success: true,
-      message: '退出登录成功',
-    });
+    return reply.send(formatSuccessResponse(null, '退出登录成功'));
   },
 };

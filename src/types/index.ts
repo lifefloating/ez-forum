@@ -1,5 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import { Role } from '@prisma/client';
+import { ErrorResponse } from './errors';
 
 export interface IUser {
   id: string;
@@ -77,11 +78,22 @@ export interface UpdateUserRequest {
   avatar?: string;
 }
 
-export interface ApiResponse<T> {
+// 旧的API响应接口，保留以兼容现有代码
+export interface LegacyApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
 }
+
+// 新的API成功响应接口，基于Stripe API风格
+export interface SuccessResponse<T = any> {
+  code: 'success';
+  message: string;
+  data: T;
+}
+
+// API响应类型，可能是成功响应或错误响应
+export type ApiResponse<T = any> = SuccessResponse<T> | ErrorResponse;
 
 export interface PaginationQuery {
   page?: number;

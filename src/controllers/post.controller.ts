@@ -1,7 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreatePostRequest, PaginationQuery, UpdatePostRequest } from '../types';
-import { ApiError } from '../middlewares/errorHandler';
+import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
 import { postService } from '../services/post.service';
+import {
+  ERROR_TYPES,
+  RESOURCE_ERROR_CODES,
+  PERMISSION_ERROR_CODES,
+  REQUEST_ERROR_CODES,
+} from '../types/errors';
 
 export const postController = {
   /**
@@ -17,10 +23,7 @@ export const postController = {
       order,
     });
 
-    return reply.send({
-      success: true,
-      data: result,
-    });
+    return reply.send(formatSuccessResponse(result));
   },
 
   /**
@@ -32,16 +35,18 @@ export const postController = {
     const post = await postService.findPostById(id);
 
     if (!post) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 增加帖子浏览量
     await postService.incrementViews(id);
 
-    return reply.send({
-      success: true,
-      data: post,
-    });
+    return reply.send(formatSuccessResponse(post));
   },
 
   /**
@@ -52,7 +57,12 @@ export const postController = {
     const userId = request.user.id;
 
     if (!title || !content) {
-      throw new ApiError(400, '标题和内容不能为空');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
+        message: '标题和内容不能为空',
+      });
     }
 
     const post = await postService.createPost({
@@ -62,10 +72,7 @@ export const postController = {
       authorId: userId,
     });
 
-    return reply.status(201).send({
-      success: true,
-      data: post,
-    });
+    return reply.status(201).send(formatSuccessResponse(post, '帖子创建成功'));
   },
 
   /**
@@ -80,12 +87,22 @@ export const postController = {
     const existingPost = await postService.findPostById(id);
 
     if (!existingPost) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 检查是否是帖子作者或管理员
     if (existingPost.authorId !== userId && request.user.role !== 'ADMIN') {
-      throw new ApiError(403, '无权限修改此帖子');
+      throw new ApiError({
+        statusCode: 403,
+        type: ERROR_TYPES.PERMISSION_ERROR,
+        code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
+        message: '无权限修改此帖子',
+      });
     }
 
     // 更新帖子
@@ -95,10 +112,7 @@ export const postController = {
       images,
     });
 
-    return reply.send({
-      success: true,
-      data: updatedPost,
-    });
+    return reply.send(formatSuccessResponse(updatedPost, '帖子更新成功'));
   },
 
   /**
@@ -112,21 +126,28 @@ export const postController = {
     const existingPost = await postService.findPostById(id);
 
     if (!existingPost) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 检查是否是帖子作者或管理员
     if (existingPost.authorId !== userId && request.user.role !== 'ADMIN') {
-      throw new ApiError(403, '无权限删除此帖子');
+      throw new ApiError({
+        statusCode: 403,
+        type: ERROR_TYPES.PERMISSION_ERROR,
+        code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
+        message: '无权限删除此帖子',
+      });
     }
 
     // 删除帖子
     await postService.deletePost(id);
 
-    return reply.send({
-      success: true,
-      message: '帖子删除成功',
-    });
+    return reply.send(formatSuccessResponse(null, '帖子删除成功'));
   },
 
   /**
@@ -140,16 +161,18 @@ export const postController = {
     const existingPost = await postService.findPostById(id);
 
     if (!existingPost) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 添加点赞
     await postService.likePost(id, userId);
 
-    return reply.send({
-      success: true,
-      message: '点赞成功',
-    });
+    return reply.send(formatSuccessResponse(null, '点赞成功'));
   },
 
   /**
@@ -163,16 +186,18 @@ export const postController = {
     const existingPost = await postService.findPostById(id);
 
     if (!existingPost) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 移除点赞
     await postService.unlikePost(id, userId);
 
-    return reply.send({
-      success: true,
-      message: '取消点赞成功',
-    });
+    return reply.send(formatSuccessResponse(null, '取消点赞成功'));
   },
 
   /**
@@ -187,10 +212,7 @@ export const postController = {
       limit: Number(limit),
     });
 
-    return reply.send({
-      success: true,
-      data: result,
-    });
+    return reply.send(formatSuccessResponse(result));
   },
 
   /**
@@ -212,9 +234,6 @@ export const postController = {
       order,
     });
 
-    return reply.send({
-      success: true,
-      data: result,
-    });
+    return reply.send(formatSuccessResponse(result));
   },
 };

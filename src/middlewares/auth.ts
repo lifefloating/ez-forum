@@ -1,6 +1,7 @@
 import { FastifyRequest } from 'fastify';
 import { ApiError } from './errorHandler';
 import logger from '../utils/logger';
+import { ERROR_TYPES, AUTHENTICATION_ERROR_CODES, PERMISSION_ERROR_CODES } from '../types/errors';
 
 // 验证用户是否已登录
 export const authenticate = async (request: FastifyRequest) => {
@@ -8,7 +9,12 @@ export const authenticate = async (request: FastifyRequest) => {
     await request.jwtVerify();
   } catch (error) {
     logger.error(error);
-    throw new ApiError(401, '请先登录');
+    throw new ApiError({
+      statusCode: 401,
+      type: ERROR_TYPES.AUTHENTICATION_ERROR,
+      code: AUTHENTICATION_ERROR_CODES.MISSING_TOKEN,
+      message: '请先登录',
+    });
   }
 };
 
@@ -20,6 +26,11 @@ export const authorizeAdmin = async (request: FastifyRequest) => {
   const user = request.user as { id: string; role: string };
 
   if (user.role !== 'ADMIN') {
-    throw new ApiError(403, '无访问权限，需要管理员权限');
+    throw new ApiError({
+      statusCode: 403,
+      type: ERROR_TYPES.PERMISSION_ERROR,
+      code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
+      message: '无访问权限，需要管理员权限',
+    });
   }
 };

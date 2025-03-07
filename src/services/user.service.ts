@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { ApiError } from '../middlewares/errorHandler';
+import { ERROR_TYPES, RESOURCE_ERROR_CODES } from '../types/errors';
 
 const prisma = new PrismaClient();
 
@@ -31,7 +32,13 @@ export const userService = {
       });
 
       if (existingUser && existingUser.id !== id) {
-        throw new ApiError(409, '用户名已被使用');
+        throw new ApiError({
+          statusCode: 409,
+          type: ERROR_TYPES.RESOURCE_ERROR,
+          code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
+          message: '用户名已被使用',
+          param: 'username',
+        });
       }
     }
 

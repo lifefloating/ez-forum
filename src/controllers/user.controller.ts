@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UpdateUserRequest } from '../types';
-import { ApiError } from '../middlewares/errorHandler';
+import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
 import { userService } from '../services/user.service';
+import { ERROR_TYPES, RESOURCE_ERROR_CODES } from '../types/errors';
 
 export const userController = {
   /**
@@ -13,20 +14,24 @@ export const userController = {
     const user = await userService.findUserById(id);
 
     if (!user) {
-      throw new ApiError(404, '用户不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '用户不存在',
+      });
     }
 
-    return reply.send({
-      success: true,
-      data: {
+    return reply.send(
+      formatSuccessResponse({
         id: user.id,
         username: user.username,
         email: user.email,
         avatar: user.avatar,
         bio: user.bio,
         createdAt: user.createdAt,
-      },
-    });
+      }),
+    );
   },
 
   /**
@@ -43,15 +48,17 @@ export const userController = {
       avatar,
     });
 
-    return reply.send({
-      success: true,
-      data: {
-        id: updatedUser.id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        avatar: updatedUser.avatar,
-        bio: updatedUser.bio,
-      },
-    });
+    return reply.send(
+      formatSuccessResponse(
+        {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          avatar: updatedUser.avatar,
+          bio: updatedUser.bio,
+        },
+        '用户信息更新成功',
+      ),
+    );
   },
 };

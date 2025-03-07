@@ -23,7 +23,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {
@@ -84,7 +85,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {
@@ -138,7 +140,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           201: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {
@@ -188,7 +191,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {
@@ -230,8 +234,9 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
               message: { type: 'string' },
+              data: { type: 'null' },
             },
           },
         },
@@ -260,8 +265,9 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
               message: { type: 'string' },
+              data: { type: 'null' },
             },
           },
         },
@@ -290,8 +296,9 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
               message: { type: 'string' },
+              data: { type: 'null' },
             },
           },
         },
@@ -327,7 +334,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {
@@ -392,7 +400,8 @@ export async function postRoutes(fastify: FastifyInstance) {
           200: {
             type: 'object',
             properties: {
-              success: { type: 'boolean' },
+              code: { type: 'string', enum: ['success'] },
+              message: { type: 'string' },
               data: {
                 type: 'object',
                 properties: {

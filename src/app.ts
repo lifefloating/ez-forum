@@ -7,6 +7,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import cookie from '@fastify/cookie';
 import staticFiles from '@fastify/static';
 import path from 'path';
+import { registerErrorResponseSchema } from './schemas/errorResponse.schema';
 
 import { registerRoutes } from './routes';
 import { PrismaPlugin } from './plugins/prisma';
@@ -54,6 +55,9 @@ export async function buildApp(): Promise<FastifyInstance> {
   // 注册Swagger文档
   await app.register(swagger, swaggerOptions);
   await app.register(swaggerUi, swaggerUiOptions);
+
+  // 注册错误响应 schema 到 OpenAPI 文档
+  registerErrorResponseSchema(app);
 
   // 注册Prisma插件
   await app.register(PrismaPlugin);

@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { ApiError } from '../middlewares/errorHandler';
+import { ERROR_TYPES, RESOURCE_ERROR_CODES } from '../types/errors';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,13 @@ export const authService = {
     });
 
     if (existingUsername) {
-      throw new ApiError(409, '用户名已被使用');
+      throw new ApiError({
+        statusCode: 409,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
+        message: '用户名已被使用',
+        param: 'username',
+      });
     }
 
     // 检查邮箱是否已存在
@@ -24,7 +31,13 @@ export const authService = {
     });
 
     if (existingEmail) {
-      throw new ApiError(409, '邮箱已被注册');
+      throw new ApiError({
+        statusCode: 409,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
+        message: '邮箱已被注册',
+        param: 'email',
+      });
     }
 
     // 加密密码

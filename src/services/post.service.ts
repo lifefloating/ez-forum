@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ApiError } from '../middlewares/errorHandler';
 import { PaginationQuery } from '../types';
+import { ERROR_TYPES, REQUEST_ERROR_CODES } from '../types/errors';
 
 const prisma = new PrismaClient();
 
@@ -185,7 +186,12 @@ export const postService = {
     });
 
     if (existingLike) {
-      throw new ApiError(400, '已经点赞过该帖子');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.OPERATION_NOT_ALLOWED,
+        message: '已经点赞过该帖子',
+      });
     }
 
     return prisma.like.create({
@@ -211,7 +217,12 @@ export const postService = {
     });
 
     if (!existingLike) {
-      throw new ApiError(400, '尚未点赞该帖子');
+      throw new ApiError({
+        statusCode: 400,
+        type: ERROR_TYPES.INVALID_REQUEST_ERROR,
+        code: REQUEST_ERROR_CODES.OPERATION_NOT_ALLOWED,
+        message: '尚未点赞该帖子',
+      });
     }
 
     return prisma.like.delete({

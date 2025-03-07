@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { PaginationQuery } from '../types';
-import { ApiError } from '../middlewares/errorHandler';
+import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
 import { adminService } from '../services/admin.service';
+import { ERROR_TYPES, RESOURCE_ERROR_CODES } from '../types/errors';
 
 export const adminController = {
   /**
@@ -21,10 +22,7 @@ export const adminController = {
       keyword,
     });
 
-    return reply.send({
-      success: true,
-      data: result,
-    });
+    return reply.send(formatSuccessResponse(result));
   },
 
   /**
@@ -36,16 +34,18 @@ export const adminController = {
     // 检查帖子是否存在
     const post = await adminService.findPostById(id);
     if (!post) {
-      throw new ApiError(404, '帖子不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '帖子不存在',
+      });
     }
 
     // 删除帖子
     await adminService.deletePost(id);
 
-    return reply.send({
-      success: true,
-      message: '帖子删除成功',
-    });
+    return reply.send(formatSuccessResponse(null, '帖子删除成功'));
   },
 
   /**
@@ -65,10 +65,7 @@ export const adminController = {
       keyword,
     });
 
-    return reply.send({
-      success: true,
-      data: result,
-    });
+    return reply.send(formatSuccessResponse(result));
   },
 
   /**
@@ -87,20 +84,27 @@ export const adminController = {
     // 检查用户是否存在
     const user = await adminService.findUserById(id);
     if (!user) {
-      throw new ApiError(404, '用户不存在');
+      throw new ApiError({
+        statusCode: 404,
+        type: ERROR_TYPES.RESOURCE_ERROR,
+        code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+        message: '用户不存在',
+      });
     }
 
     // 更新用户角色
     const updatedUser = await adminService.updateUserRole(id, role);
 
-    return reply.send({
-      success: true,
-      data: {
-        id: updatedUser.id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        role: updatedUser.role,
-      },
-    });
+    return reply.send(
+      formatSuccessResponse(
+        {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          role: updatedUser.role,
+        },
+        '用户角色更新成功',
+      ),
+    );
   },
 };

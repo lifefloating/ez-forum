@@ -2,6 +2,7 @@ import COS from 'cos-nodejs-sdk-v5';
 import { Readable } from 'stream';
 import logger from './logger';
 import { ApiError } from '../middlewares/errorHandler';
+import { ERROR_TYPES, SERVER_ERROR_CODES } from '../types/errors';
 
 // 初始化COS客户端
 const cos = new COS({
@@ -40,7 +41,14 @@ export const uploadFileToCOS = async (
         (err) => {
           if (err) {
             logger.error(`COS上传失败: ${err.message}`);
-            return reject(new ApiError(500, '文件上传失败'));
+            return reject(
+              new ApiError({
+                statusCode: 500,
+                type: ERROR_TYPES.SERVER_ERROR,
+                code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+                message: '文件上传失败',
+              }),
+            );
           }
 
           // 返回文件访问URL
@@ -52,7 +60,12 @@ export const uploadFileToCOS = async (
     });
   } catch (error) {
     logger.error(`COS上传异常: ${(error as Error).message}`);
-    throw new ApiError(500, '文件上传处理失败');
+    throw new ApiError({
+      statusCode: 500,
+      type: ERROR_TYPES.SERVER_ERROR,
+      code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+      message: '文件上传处理失败',
+    });
   }
 };
 
@@ -76,7 +89,14 @@ export const deleteFileFromCOS = async (fileUrl: string): Promise<void> => {
         (err) => {
           if (err) {
             logger.error(`COS删除失败: ${err.message}`);
-            return reject(new ApiError(500, '文件删除失败'));
+            return reject(
+              new ApiError({
+                statusCode: 500,
+                type: ERROR_TYPES.SERVER_ERROR,
+                code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+                message: '文件删除失败',
+              }),
+            );
           }
 
           logger.info(`文件删除成功: ${key}`);
@@ -86,6 +106,11 @@ export const deleteFileFromCOS = async (fileUrl: string): Promise<void> => {
     });
   } catch (error) {
     logger.error(`COS删除异常: ${(error as Error).message}`);
-    throw new ApiError(500, '文件删除处理失败');
+    throw new ApiError({
+      statusCode: 500,
+      type: ERROR_TYPES.SERVER_ERROR,
+      code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+      message: '文件删除处理失败',
+    });
   }
 };
