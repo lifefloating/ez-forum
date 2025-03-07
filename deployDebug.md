@@ -38,8 +38,7 @@ cat > ecosystem.config.js << EOF
 module.exports = {
   apps: [{
     name: "ez-forum",
-    script: "pnpm",
-    args: "dev",
+    script: "dist/index.js",
     cwd: "./",
     instances: 1,
     autorestart: true,
