@@ -7,6 +7,7 @@ export async function commentRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/:commentId/replies',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['comments'],
         summary: '获取评论的回复列表',
@@ -75,6 +76,7 @@ export async function commentRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/post/:postId',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['comments'],
         summary: '获取帖子的评论列表',

@@ -7,6 +7,7 @@ export async function postRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['posts'],
         summary: '获取帖子列表',
@@ -55,6 +56,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                         },
                         commentCount: { type: 'integer' },
                         likeCount: { type: 'integer' },
+                        isLiked: { type: 'boolean' },
                       },
                     },
                   },
@@ -76,6 +78,7 @@ export async function postRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/:id',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['posts'],
         summary: '获取单个帖子详情',
@@ -113,6 +116,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                   },
                   commentCount: { type: 'integer' },
                   likeCount: { type: 'integer' },
+                  isLiked: { type: 'boolean' },
                 },
               },
             },
@@ -316,6 +320,7 @@ export async function postRoutes(fastify: FastifyInstance) {
   fastify.get(
     '/user/:userId',
     {
+      preHandler: [authenticate],
       schema: {
         tags: ['posts'],
         summary: '获取用户的帖子列表',
@@ -366,6 +371,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                         },
                         commentCount: { type: 'integer' },
                         likeCount: { type: 'integer' },
+                        isLiked: { type: 'boolean' },
                       },
                     },
                   },
@@ -432,6 +438,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                         },
                         commentCount: { type: 'integer' },
                         likeCount: { type: 'integer' },
+                        isLiked: { type: 'boolean' },
                       },
                     },
                   },

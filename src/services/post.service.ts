@@ -10,7 +10,7 @@ export const postService = {
    * 获取热门帖子列表
    * 按照点赞数量 + 评论数量的总和排序
    */
-  async findHotPosts(options: PaginationQuery) {
+  async findHotPosts(options: PaginationQuery, currentUserId?: string) {
     const { page = 1, limit = 10 } = options;
     const skip = (page - 1) * limit;
 
@@ -48,8 +48,15 @@ export const postService = {
       .sort((a, b) => b.hotScore - a.hotScore) // 按热度分数降序排序
       .slice(skip, skip + limit); // 分页
 
+    // 检查用户是否点赞了每个帖子
+    const likePromises = currentUserId
+      ? sortedPosts.map((post) => this.checkUserLikedPost(post.id, currentUserId))
+      : sortedPosts.map(() => Promise.resolve(false));
+
+    const likesResult = await Promise.all(likePromises);
+
     // 格式化返回数据
-    const formattedPosts = sortedPosts.map((post) => ({
+    const formattedPosts = sortedPosts.map((post, index) => ({
       id: post.id,
       title: post.title,
       content: post.content,
@@ -60,6 +67,7 @@ export const postService = {
       author: post.author,
       commentCount: post._count.comments,
       likeCount: post._count.likes,
+      isLiked: likesResult[index],
     }));
 
     return {
@@ -73,7 +81,7 @@ export const postService = {
   /**
    * 获取帖子列表
    */
-  async findPosts(options: PaginationQuery) {
+  async findPosts(options: PaginationQuery, currentUserId?: string) {
     const { page = 1, limit = 10, sort = 'createdAt', order = 'desc', filter } = options;
     const skip = (page - 1) * limit;
 
@@ -105,7 +113,7 @@ export const postService = {
     else if (filter === 'hot') {
       // 热门推荐需要特殊处理，因为我们需要基于评论数和点赞数的总和排序
       // 这里我们需要先获取所有帖子，然后在内存中排序
-      return this.findHotPosts(options);
+      return this.findHotPosts(options, currentUserId);
     } else {
       // 其他情况下使用用户指定的排序
       orderByOptions = {
@@ -123,8 +131,15 @@ export const postService = {
       prisma.post.count(),
     ]);
 
+    // 检查用户是否点赞了每个帖子
+    const likePromises = currentUserId
+      ? posts.map((post) => this.checkUserLikedPost(post.id, currentUserId))
+      : posts.map(() => Promise.resolve(false));
+
+    const likesResult = await Promise.all(likePromises);
+
     // 格式化返回数据
-    const formattedPosts = posts.map((post) => ({
+    const formattedPosts = posts.map((post, index) => ({
       id: post.id,
       title: post.title,
       content: post.content,
@@ -135,6 +150,7 @@ export const postService = {
       author: post.author,
       commentCount: post._count.comments,
       likeCount: post._count.likes,
+      isLiked: likesResult[index],
     }));
 
     return {
@@ -149,7 +165,7 @@ export const postService = {
   /**
    * 通过ID查找帖子
    */
-  async findPostById(id: string) {
+  async findPostById(id: string, currentUserId?: string) {
     const post = await prisma.post.findUnique({
       where: { id },
       include: {
@@ -173,6 +189,9 @@ export const postService = {
       return null;
     }
 
+    // 检查当前用户是否点赞了该帖子
+    const isLiked = currentUserId ? await this.checkUserLikedPost(id, currentUserId) : false;
+
     return {
       id: post.id,
       title: post.title,
@@ -185,6 +204,7 @@ export const postService = {
       author: post.author,
       commentCount: post._count.comments,
       likeCount: post._count.likes,
+      isLiked,
     };
   },
 
@@ -322,7 +342,7 @@ export const postService = {
   /**
    * 获取用户的帖子列表
    */
-  async findUserPosts(userId: string, options: PaginationQuery) {
+  async findUserPosts(userId: string, options: PaginationQuery, currentUserId?: string) {
     const { page = 1, limit = 10, sort = 'createdAt', order = 'desc' } = options;
     const skip = (page - 1) * limit;
 
@@ -359,8 +379,15 @@ export const postService = {
       }),
     ]);
 
+    // 检查用户是否点赞了每个帖子
+    const likePromises = currentUserId
+      ? posts.map((post) => this.checkUserLikedPost(post.id, currentUserId))
+      : posts.map(() => Promise.resolve(false));
+
+    const likesResult = await Promise.all(likePromises);
+
     // 格式化返回数据
-    const formattedPosts = posts.map((post) => ({
+    const formattedPosts = posts.map((post, index) => ({
       id: post.id,
       title: post.title,
       content: post.content,
@@ -371,6 +398,7 @@ export const postService = {
       author: post.author,
       commentCount: post._count.comments,
       likeCount: post._count.likes,
+      isLiked: likesResult[index],
     }));
 
     return {
@@ -385,7 +413,7 @@ export const postService = {
   /**
    * 获取用户点赞的帖子列表
    */
-  async findUserLikedPosts(userId: string, options: PaginationQuery) {
+  async findUserLikedPosts(userId: string, options: PaginationQuery, currentUserId?: string) {
     const { page = 1, limit = 10, sort = 'createdAt', order = 'desc' } = options;
     const skip = (page - 1) * limit;
 
@@ -426,6 +454,10 @@ export const postService = {
       }),
     ]);
 
+    // 对于用户已点赞的帖子列表，当前用户已经肯定点赞了这些帖子，所以设置 isLiked 为 true
+    // 不过我们还需要检查查看列表的用户是否是当前登录用户
+    const isCurrentUser = userId === currentUserId;
+
     // 格式化返回数据
     const formattedPosts = likes.map((like) => ({
       id: like.post.id,
@@ -438,6 +470,7 @@ export const postService = {
       author: like.post.author,
       commentCount: like.post._count.comments,
       likeCount: like.post._count.likes,
+      isLiked: isCurrentUser || (currentUserId ? true : false),
     }));
 
     return {
@@ -447,5 +480,25 @@ export const postService = {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  },
+
+  /**
+   * 检查用户是否点赞了某个帖子
+   */
+  async checkUserLikedPost(postId: string, userId: string) {
+    if (!userId) {
+      return false;
+    }
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    return !!existingLike;
   },
 };

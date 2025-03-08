@@ -13,37 +13,54 @@ export const postController = {
   /**
    * 获取帖子列表
    */
-  async getPosts(request: FastifyRequest<{ Querystring: PaginationQuery }>, reply: FastifyReply) {
-    const { page = 1, limit = 10, sort = 'createdAt', order = 'desc', filter } = request.query;
+  async getPosts(request: FastifyRequest, reply: FastifyReply) {
+    const {
+      page = 1,
+      limit = 10,
+      sort = 'createdAt',
+      order = 'desc',
+      filter,
+    } = request.query as PaginationQuery;
     const userId = request.user?.id;
 
     // 根据过滤类型调用不同的服务方法
     let result;
     if (filter === 'my' && userId) {
       // 我发布的帖子
-      result = await postService.findUserPosts(userId, {
-        page: Number(page),
-        limit: Number(limit),
-        sort,
-        order,
-      });
+      result = await postService.findUserPosts(
+        userId,
+        {
+          page: Number(page),
+          limit: Number(limit),
+          sort,
+          order,
+        },
+        userId,
+      );
     } else if (filter === 'liked' && userId) {
       // 我点赞的帖子
-      result = await postService.findUserLikedPosts(userId, {
-        page: Number(page),
-        limit: Number(limit),
-        sort,
-        order,
-      });
+      result = await postService.findUserLikedPosts(
+        userId,
+        {
+          page: Number(page),
+          limit: Number(limit),
+          sort,
+          order,
+        },
+        userId,
+      );
     } else {
       // 默认或最新发布
-      result = await postService.findPosts({
-        page: Number(page),
-        limit: Number(limit),
-        sort,
-        order,
-        filter,
-      });
+      result = await postService.findPosts(
+        {
+          page: Number(page),
+          limit: Number(limit),
+          sort,
+          order,
+          filter,
+        },
+        userId,
+      );
     }
 
     return reply.send(formatSuccessResponse(result));
@@ -52,10 +69,11 @@ export const postController = {
   /**
    * 获取单个帖子详情
    */
-  async getPostById(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-    const { id } = request.params;
+  async getPostById(request: FastifyRequest, reply: FastifyReply) {
+    const { id } = request.params as { id: string };
+    const userId = request.user?.id;
 
-    const post = await postService.findPostById(id);
+    const post = await postService.findPostById(id, userId);
 
     if (!post) {
       throw new ApiError({
@@ -229,11 +247,16 @@ export const postController = {
   async getUserPosts(request: FastifyRequest, reply: FastifyReply) {
     const { userId } = request.params as { userId: string };
     const { page = 1, limit = 10 } = request.query as PaginationQuery;
+    const currentUserId = request.user?.id;
 
-    const result = await postService.findUserPosts(userId, {
-      page: Number(page),
-      limit: Number(limit),
-    });
+    const result = await postService.findUserPosts(
+      userId,
+      {
+        page: Number(page),
+        limit: Number(limit),
+      },
+      currentUserId,
+    );
 
     return reply.send(formatSuccessResponse(result));
   },
@@ -250,12 +273,16 @@ export const postController = {
       order = 'desc',
     } = request.query as PaginationQuery;
 
-    const result = await postService.findUserLikedPosts(userId, {
-      page: Number(page),
-      limit: Number(limit),
-      sort,
-      order,
-    });
+    const result = await postService.findUserLikedPosts(
+      userId,
+      {
+        page: Number(page),
+        limit: Number(limit),
+        sort,
+        order,
+      },
+      userId,
+    );
 
     return reply.send(formatSuccessResponse(result));
   },
