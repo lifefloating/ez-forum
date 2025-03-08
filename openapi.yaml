@@ -336,6 +336,8 @@ paths:
                               type: integer
                             likeCount:
                               type: integer
+                            isLiked:
+                              type: boolean
                       total:
                         type: integer
                       page:
@@ -467,6 +469,8 @@ paths:
                         type: integer
                       likeCount:
                         type: integer
+                      isLiked:
+                        type: boolean
     put:
       summary: 更新帖子
       tags:
@@ -707,6 +711,8 @@ paths:
                               type: integer
                             likeCount:
                               type: integer
+                            isLiked:
+                              type: boolean
                       total:
                         type: integer
                       page:
@@ -804,6 +810,8 @@ paths:
                               type: integer
                             likeCount:
                               type: integer
+                            isLiked:
+                              type: boolean
                       total:
                         type: integer
                       page:
