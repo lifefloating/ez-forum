@@ -24,6 +24,8 @@ model User {
   posts    Post[]
   comments Comment[]
   likes    Like[]
+  // 收到的评论回复
+  commentReplies Comment[] @relation("CommentReplyTo")
 
   @@map("users")
 }
@@ -64,6 +66,11 @@ model Comment {
   parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   // 子评论（回复）
   replies  Comment[] @relation("CommentReplies")
+  
+  // 回复给用户的ID，可以为空
+  replyToId String? @db.ObjectId
+  // 回复给用户的关系
+  replyTo   User?   @relation("CommentReplyTo", fields: [replyToId], references: [id], onDelete: SetNull)
 
   @@map("comments")
 }

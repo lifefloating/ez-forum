@@ -5,6 +5,7 @@ import { UserPublicProfile } from './user.model';
 export interface CreateCommentInput {
   content: string;
   postId: string;
+  replyToId?: string;
 }
 
 // 更新评论接口
@@ -20,7 +21,10 @@ export interface CommentResponse {
   updatedAt: Date;
   authorId: string;
   postId: string;
+  parentId?: string;
+  replyToId?: string;
   author?: UserPublicProfile;
+  replyTo?: UserPublicProfile;
   post?: {
     id: string;
     title: string;
@@ -41,6 +45,7 @@ export interface CommentQueryParams {
 export function toCommentResponse(
   comment: Comment & {
     author?: UserPublicProfile;
+    replyTo?: UserPublicProfile;
     post?: {
       id: string;
       title: string;
@@ -49,7 +54,10 @@ export function toCommentResponse(
 ): CommentResponse {
   return {
     ...comment,
+    parentId: comment.parentId || undefined,
+    replyToId: comment.replyToId || undefined,
     author: comment.author,
+    replyTo: comment.replyTo,
     post: comment.post,
   };
 }

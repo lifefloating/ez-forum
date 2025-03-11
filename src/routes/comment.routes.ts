@@ -184,6 +184,7 @@ export async function commentRoutes(fastify: FastifyInstance) {
           properties: {
             content: { type: 'string' },
             parentId: { type: 'string', description: '父评论ID，用于回复评论' },
+            replyToId: { type: 'string', description: '回复给用户的ID' },
           },
         },
         response: {
@@ -202,8 +203,18 @@ export async function commentRoutes(fastify: FastifyInstance) {
                   authorId: { type: 'string' },
                   postId: { type: 'string' },
                   parentId: { type: 'string', nullable: true },
+                  replyToId: { type: 'string', nullable: true },
                   author: {
                     type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      username: { type: 'string' },
+                      avatar: { type: 'string', nullable: true },
+                    },
+                  },
+                  replyTo: {
+                    type: 'object',
+                    nullable: true,
                     properties: {
                       id: { type: 'string' },
                       username: { type: 'string' },

@@ -9,6 +9,9 @@ import {
   PERMISSION_ERROR_CODES,
   REQUEST_ERROR_CODES,
 } from '../types/errors';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const commentController = {
   /**
@@ -81,7 +84,7 @@ export const commentController = {
    */
   async createComment(request: FastifyRequest, reply: FastifyReply) {
     const { postId } = request.params as { postId: string };
-    const { content, parentId } = request.body as CreateCommentRequest;
+    const { content, parentId, replyToId } = request.body as CreateCommentRequest;
     const userId = (request as any).user.id;
 
     if (!content) {
@@ -130,11 +133,29 @@ export const commentController = {
       }
     }
 
+    // 如果指定了回复用户，检查用户是否存在
+    if (replyToId) {
+      const replyToUser = await prisma.user.findUnique({
+        where: { id: replyToId },
+      });
+
+      if (!replyToUser) {
+        throw new ApiError({
+          statusCode: 404,
+          type: ERROR_TYPES.RESOURCE_ERROR,
+          code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
+          message: '回复的用户不存在',
+          param: 'replyToId',
+        });
+      }
+    }
+
     const comment = await commentService.createComment({
       content,
       postId,
       authorId: userId,
       parentId,
+      replyToId,
     });
 
     return reply.status(201).send(formatSuccessResponse(comment, '评论创建成功'));

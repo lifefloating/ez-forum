@@ -70,6 +70,7 @@ export interface UpdatePostRequest {
 export interface CreateCommentRequest {
   content: string;
   parentId?: string; // 父评论ID，用于回复评论
+  replyToId?: string; // 回复给用户的ID
 }
 
 export interface UpdateUserRequest {
