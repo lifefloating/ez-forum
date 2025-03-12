@@ -33,6 +33,13 @@ export const commentService = {
               avatar: true,
             },
           },
+          replyTo: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
+          },
         },
       }),
       prisma.comment.count({
@@ -77,10 +84,24 @@ export const commentService = {
               avatar: true,
             },
           },
+          replyTo: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
+          },
           // 直接包含回复
           replies: {
             include: {
               author: {
+                select: {
+                  id: true,
+                  username: true,
+                  avatar: true,
+                },
+              },
+              replyTo: {
                 select: {
                   id: true,
                   username: true,
@@ -122,10 +143,24 @@ export const commentService = {
             avatar: true,
           },
         },
+        replyTo: {
+          select: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
         // 包含评论的回复
         replies: {
           include: {
             author: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
+            replyTo: {
               select: {
                 id: true,
                 username: true,
@@ -296,6 +331,13 @@ export const commentService = {
               avatar: true,
             },
           },
+          replyTo: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
+          },
         },
       });
 
@@ -378,6 +420,13 @@ export const commentService = {
               avatar: true,
             },
           },
+          replyTo: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
+          },
           post: {
             select: {
               id: true,
@@ -400,6 +449,13 @@ export const commentService = {
           replies: {
             include: {
               author: {
+                select: {
+                  id: true,
+                  username: true,
+                  avatar: true,
+                },
+              },
+              replyTo: {
                 select: {
                   id: true,
                   username: true,

@@ -896,8 +896,22 @@ paths:
                               type: string
                             parentId:
                               type: string
+                            replyToId:
+                              type: string
+                              nullable: true
                             author:
                               type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            replyTo:
+                              type: object
+                              nullable: true
                               properties:
                                 id:
                                   type: string
@@ -991,8 +1005,22 @@ paths:
                             parentId:
                               type: string
                               nullable: true
+                            replyToId:
+                              type: string
+                              nullable: true
                             author:
                               type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            replyTo:
+                              type: object
+                              nullable: true
                               properties:
                                 id:
                                   type: string
@@ -1015,8 +1043,22 @@ paths:
                                     format: date-time
                                   authorId:
                                     type: string
+                                  replyToId:
+                                    type: string
+                                    nullable: true
                                   author:
                                     type: object
+                                    properties:
+                                      id:
+                                        type: string
+                                      username:
+                                        type: string
+                                      avatar:
+                                        type: string
+                                        nullable: true
+                                  replyTo:
+                                    type: object
+                                    nullable: true
                                     properties:
                                       id:
                                         type: string
@@ -1193,8 +1235,25 @@ paths:
                         type: string
                       postId:
                         type: string
+                      parentId:
+                        type: string
+                        nullable: true
+                      replyToId:
+                        type: string
+                        nullable: true
                       author:
                         type: object
+                        properties:
+                          id:
+                            type: string
+                          username:
+                            type: string
+                          avatar:
+                            type: string
+                            nullable: true
+                      replyTo:
+                        type: object
+                        nullable: true
                         properties:
                           id:
                             type: string
@@ -1302,8 +1361,25 @@ paths:
                               type: string
                             postId:
                               type: string
+                            parentId:
+                              type: string
+                              nullable: true
+                            replyToId:
+                              type: string
+                              nullable: true
                             author:
                               type: object
+                              properties:
+                                id:
+                                  type: string
+                                username:
+                                  type: string
+                                avatar:
+                                  type: string
+                                  nullable: true
+                            replyTo:
+                              type: object
+                              nullable: true
                               properties:
                                 id:
                                   type: string

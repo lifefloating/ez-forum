@@ -48,8 +48,18 @@ export async function commentRoutes(fastify: FastifyInstance) {
                         authorId: { type: 'string' },
                         postId: { type: 'string' },
                         parentId: { type: 'string' },
+                        replyToId: { type: 'string', nullable: true },
                         author: {
                           type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            username: { type: 'string' },
+                            avatar: { type: 'string', nullable: true },
+                          },
+                        },
+                        replyTo: {
+                          type: 'object',
+                          nullable: true,
                           properties: {
                             id: { type: 'string' },
                             username: { type: 'string' },
@@ -117,8 +127,18 @@ export async function commentRoutes(fastify: FastifyInstance) {
                         authorId: { type: 'string' },
                         postId: { type: 'string' },
                         parentId: { type: 'string', nullable: true },
+                        replyToId: { type: 'string', nullable: true },
                         author: {
                           type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            username: { type: 'string' },
+                            avatar: { type: 'string', nullable: true },
+                          },
+                        },
+                        replyTo: {
+                          type: 'object',
+                          nullable: true,
                           properties: {
                             id: { type: 'string' },
                             username: { type: 'string' },
@@ -134,8 +154,18 @@ export async function commentRoutes(fastify: FastifyInstance) {
                               content: { type: 'string' },
                               createdAt: { type: 'string', format: 'date-time' },
                               authorId: { type: 'string' },
+                              replyToId: { type: 'string', nullable: true },
                               author: {
                                 type: 'object',
+                                properties: {
+                                  id: { type: 'string' },
+                                  username: { type: 'string' },
+                                  avatar: { type: 'string', nullable: true },
+                                },
+                              },
+                              replyTo: {
+                                type: 'object',
+                                nullable: true,
                                 properties: {
                                   id: { type: 'string' },
                                   username: { type: 'string' },
@@ -285,8 +315,19 @@ export async function commentRoutes(fastify: FastifyInstance) {
                   updatedAt: { type: 'string', format: 'date-time' },
                   authorId: { type: 'string' },
                   postId: { type: 'string' },
+                  parentId: { type: 'string', nullable: true },
+                  replyToId: { type: 'string', nullable: true },
                   author: {
                     type: 'object',
+                    properties: {
+                      id: { type: 'string' },
+                      username: { type: 'string' },
+                      avatar: { type: 'string', nullable: true },
+                    },
+                  },
+                  replyTo: {
+                    type: 'object',
+                    nullable: true,
                     properties: {
                       id: { type: 'string' },
                       username: { type: 'string' },
@@ -372,8 +413,19 @@ export async function commentRoutes(fastify: FastifyInstance) {
                         updatedAt: { type: 'string', format: 'date-time' },
                         authorId: { type: 'string' },
                         postId: { type: 'string' },
+                        parentId: { type: 'string', nullable: true },
+                        replyToId: { type: 'string', nullable: true },
                         author: {
                           type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            username: { type: 'string' },
+                            avatar: { type: 'string', nullable: true },
+                          },
+                        },
+                        replyTo: {
+                          type: 'object',
+                          nullable: true,
                           properties: {
                             id: { type: 'string' },
                             username: { type: 'string' },
