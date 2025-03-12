@@ -12,6 +12,7 @@ import { registerErrorResponseSchema } from './schemas/errorResponse.schema';
 import { registerRoutes } from './routes';
 import { PrismaPlugin } from './plugins/prisma';
 import { errorHandler } from './middlewares/errorHandler';
+import { fileUrlMiddleware } from './middlewares/fileUrl';
 import { swaggerOptions, swaggerUiOptions } from './config/swagger';
 
 export async function buildApp(): Promise<FastifyInstance> {
@@ -51,6 +52,9 @@ export async function buildApp(): Promise<FastifyInstance> {
     root: path.join(process.cwd(), 'public'),
     prefix: '/public/',
   });
+
+  // 注册文件URL处理中间件
+  app.addHook('onSend', fileUrlMiddleware);
 
   // 注册Swagger文档
   await app.register(swagger, swaggerOptions);

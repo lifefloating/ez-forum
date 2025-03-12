@@ -1,11 +1,11 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
-import { uploadFileToCOS } from '../utils/cos';
+import { uploadFile, convertToOssReference } from '../utils/storage';
 import { ERROR_TYPES, REQUEST_ERROR_CODES, SERVER_ERROR_CODES } from '../types/errors';
 
 export const uploadController = {
   /**
-   * 上传文件到腾讯云COS
+   * 上传文件到云存储
    */
   async uploadFile(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -53,13 +53,17 @@ export const uploadController = {
         });
       }
 
-      // 上传文件到腾讯云COS
-      const fileUrl = await uploadFileToCOS(file.file, file.filename, file.mimetype);
+      // 上传文件到云存储（默认使用阿里云OSS）
+      const fileUrl = await uploadFile(file.file, file.filename, file.mimetype);
+
+      // 将签名URL转换为引用格式，用于存储在数据库中
+      const referenceUrl = convertToOssReference(fileUrl);
 
       return reply.send(
         formatSuccessResponse(
           {
             url: fileUrl,
+            referenceUrl: referenceUrl,
             filename: file.filename,
             mimetype: file.mimetype,
           },

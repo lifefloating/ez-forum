@@ -34,6 +34,12 @@
 - **COS_SECRET_KEY**: 腾讯云对象存储SecretKey
 - **COS_REGION**: 腾讯云对象存储地区
 - **COS_BUCKET**: 腾讯云对象存储桶名称
+- **OSS_ACCESS_KEY_ID**: 阿里云对象存储AccessKeyId
+- **OSS_ACCESS_KEY_SECRET**: 阿里云对象存储AccessKeySecret
+- **OSS_REGION**: 阿里云对象存储地区
+- **OSS_BUCKET**: 阿里云对象存储桶名称
+- **OSS_EXPIRES_IN**: 阿里云对象存储签名URL过期时间（秒）
+- **DEFAULT_STORAGE**: 默认存储服务，可选值为 'oss' 或 'cos'
 - **LOG_LEVEL**: 日志级别，可选值包括debug、info、warn、error
 
 ## 🚀 快速开始 (Quick Start)
@@ -80,6 +86,16 @@
    COS_SECRET_KEY=your_cos_secret_key
    COS_REGION=ap-guangzhou
    COS_BUCKET=your-bucket-name
+
+   # 阿里云对象存储配置
+   OSS_ACCESS_KEY_ID=your_oss_access_key_id
+   OSS_ACCESS_KEY_SECRET=your_oss_access_key_secret
+   OSS_REGION=oss-us-west-1
+   OSS_BUCKET=your-oss-bucket-name
+   OSS_EXPIRES_IN=3600
+
+   # 默认存储服务 (oss 或 cos)
+   DEFAULT_STORAGE=oss
 
    # 日志配置
    LOG_LEVEL=info
@@ -253,3 +269,62 @@ ez-forum/
   <a href="#"><img src="https://img.shields.io/badge/Status-In%20Development-yellow" alt="Project Status: In Development"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-brightgreen" alt="License: MIT"/></a>
 </p>
+
+## 📦 文件存储 (File Storage)
+
+EZ-Forum 支持两种对象存储服务：阿里云 OSS 和腾讯云 COS。系统会根据环境变量 `DEFAULT_STORAGE` 选择默认的存储服务。
+
+### 阿里云 OSS 私有桶配置
+
+为了保护上传的文件安全，我们推荐将 OSS 桶设置为私有访问权限。系统已实现自动签名 URL 功能，确保前端可以正常访问私有桶中的文件。
+
+#### 实现细节
+
+1. **文件上传**：
+   - 文件上传后生成唯一标识符（UUID）作为文件名前缀
+   - 文件路径格式：`{uuid}-{原始文件名}`
+   - 上传接口返回两种 URL 格式：
+     - `url`: 带签名的临时访问 URL（用于前端直接访问）
+     - `referenceUrl`: 引用格式 URL（用于存储在数据库中）
+
+2. **引用格式 URL**：
+   - 格式：`oss:{bucket}:{key}`
+   - 示例：`oss:ez-forum-imgs:bf58536a-b7fc-4c8f-a6d9-db49800af66e-image.jpg`
+   - 这种格式便于存储且不会泄露访问信息
+
+3. **自动 URL 转换**：
+   - 系统实现了 `fileUrlMiddleware` 中间件
+   - 自动将 API 响应中的引用格式 URL 转换为带签名的临时访问 URL
+   - 支持处理的字段：`url`、`avatar`、`image` 和 `images` 数组
+
+4. **签名 URL 有效期**：
+   - 默认为 7d
+   - 可通过环境变量 `OSS_EXPIRES_IN` 自定义
+
+### 腾讯云 COS 配置
+
+腾讯云 COS 的配置与 OSS 类似，也支持私有桶访问和签名 URL 生成。
+
+### 使用建议
+
+1. **数据库存储**：始终在数据库中存储引用格式 URL（`oss:bucket:key`）
+2. **前端开发**：无需特殊处理，API 响应中的 URL 已经是可直接访问的签名 URL
+3. **安全配置**：确保 OSS/COS 的 AccessKey 安全，建议定期轮换
+
+### 文件上传示例
+
+```typescript
+// 上传文件并获取 URL
+const response = await fetch('/api/uploads', {
+  method: 'POST',
+  body: formData
+});
+
+const result = await response.json();
+
+// 用于前端显示的临时签名 URL
+const fileUrl = result.data.url;
+
+// 用于存储在数据库中的引用格式 URL
+const referenceUrl = result.data.referenceUrl;
+```

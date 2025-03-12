@@ -23,6 +23,7 @@ export async function uploadRoutes(fastify: FastifyInstance) {
                 type: 'object',
                 properties: {
                   url: { type: 'string' },
+                  referenceUrl: { type: 'string' },
                   filename: { type: 'string' },
                   mimetype: { type: 'string' },
                 },

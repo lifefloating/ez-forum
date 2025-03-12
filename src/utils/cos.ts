@@ -1,8 +1,10 @@
 import COS from 'cos-nodejs-sdk-v5';
 import { Readable } from 'stream';
+import { v4 as uuidv4 } from 'uuid';
 import logger from './logger';
 import { ApiError } from '../middlewares/errorHandler';
 import { ERROR_TYPES, SERVER_ERROR_CODES } from '../types/errors';
+import { parseExpires } from './storage';
 
 // 初始化COS客户端
 const cos = new COS({
@@ -26,8 +28,8 @@ export const uploadFileToCOS = async (
   mimetype: string,
 ): Promise<string> => {
   try {
-    // 生成唯一文件名 (时间戳-原文件名)
-    const key = `uploads/${Date.now()}-${filename}`;
+    // 生成唯一文件名 (使用UUID)
+    const key = `${uuidv4()}-${filename}`;
 
     return new Promise((resolve, reject) => {
       cos.putObject(
@@ -111,6 +113,70 @@ export const deleteFileFromCOS = async (fileUrl: string): Promise<void> => {
       type: ERROR_TYPES.SERVER_ERROR,
       code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
       message: '文件删除处理失败',
+    });
+  }
+};
+
+/**
+ * 获取COS文件签名访问URL
+ * @param fileUrl COS文件URL
+ * @param expiresStr 过期时间字符串，如 "7d"、"24h"、"30m"，默认1小时
+ * @returns 签名后的访问URL
+ */
+export const getCOSSignedUrl = async (fileUrl: string, expiresStr = '1h'): Promise<string> => {
+  try {
+    // 从URL中提取文件key
+    const urlObj = new URL(fileUrl);
+    const key = urlObj.pathname.substring(1); // 去掉开头的斜杠
+
+    // 解析过期时间
+    const expires = parseExpires(expiresStr);
+
+    return new Promise((resolve, reject) => {
+      cos.getObjectUrl(
+        {
+          Bucket: bucket,
+          Region: region,
+          Key: key,
+          Sign: true,
+          Expires: expires,
+        },
+        (err, data) => {
+          if (err) {
+            logger.error(`获取COS签名URL失败: ${err.message}`);
+            return reject(
+              new ApiError({
+                statusCode: 500,
+                type: ERROR_TYPES.SERVER_ERROR,
+                code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+                message: '获取文件访问链接失败',
+              }),
+            );
+          }
+
+          if (data.Url) {
+            resolve(data.Url);
+          } else {
+            logger.error('获取COS签名URL失败: 返回数据中没有URL');
+            reject(
+              new ApiError({
+                statusCode: 500,
+                type: ERROR_TYPES.SERVER_ERROR,
+                code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+                message: '获取文件访问链接失败',
+              }),
+            );
+          }
+        },
+      );
+    });
+  } catch (error) {
+    logger.error(`获取COS签名URL异常: ${(error as Error).message}`);
+    throw new ApiError({
+      statusCode: 500,
+      type: ERROR_TYPES.SERVER_ERROR,
+      code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
+      message: '获取文件访问链接失败',
     });
   }
 };
