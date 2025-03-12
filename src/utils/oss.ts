@@ -34,7 +34,7 @@ export const uploadFileToOSS = async (
     // 上传文件到OSS
     const result = await client.putStream(key, fileStream, {
       contentType: mimetype,
-    });
+    } as any);
 
     if (!result) {
       throw new Error('OSS上传结果异常');
