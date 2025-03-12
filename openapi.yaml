@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: EZ-Forum API
   description: EZ-Forum API
-  version: 1.2.0
+  version: 1.0.0
 components:
   securitySchemes:
     bearerAuth:
@@ -1443,6 +1443,8 @@ paths:
                     type: object
                     properties:
                       url:
+                        type: string
+                      referenceUrl:
                         type: string
                       filename:
                         type: string
