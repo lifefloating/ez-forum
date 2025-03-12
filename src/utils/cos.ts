@@ -40,13 +40,13 @@ export const uploadFileToCOS = async (
         },
         (err) => {
           if (err) {
-            logger.error(`COS上传失败: ${err.message}`);
+            logger.error(`COS upload failed: ${err.message}`);
             return reject(
               new ApiError({
                 statusCode: 500,
                 type: ERROR_TYPES.SERVER_ERROR,
                 code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
-                message: '文件上传失败',
+                message: 'File upload failed',
               }),
             );
           }
@@ -88,13 +88,13 @@ export const deleteFileFromCOS = async (fileUrl: string): Promise<void> => {
         },
         (err) => {
           if (err) {
-            logger.error(`COS删除失败: ${err.message}`);
+            logger.error(`COS delete failed: ${err.message}`);
             return reject(
               new ApiError({
                 statusCode: 500,
                 type: ERROR_TYPES.SERVER_ERROR,
                 code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
-                message: '文件删除失败',
+                message: 'File deletion failed',
               }),
             );
           }

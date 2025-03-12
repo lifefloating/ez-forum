@@ -36,7 +36,7 @@ export class ApiError extends Error {
 }
 
 // 成功响应格式化函数
-export const formatSuccessResponse = (data: any, message: string = '操作成功') => {
+export const formatSuccessResponse = (data: any, message: string = 'Operation successful') => {
   return {
     code: 'success',
     message,
@@ -89,7 +89,7 @@ export const errorHandler = (
         formatErrorResponse(
           ERROR_TYPES.RESOURCE_ERROR,
           RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
-          '数据已存在，请检查唯一字段',
+          'Data already exists, please check unique fields',
           409,
         ),
       );
@@ -102,7 +102,7 @@ export const errorHandler = (
         formatErrorResponse(
           ERROR_TYPES.RESOURCE_ERROR,
           RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-          '请求的资源不存在',
+          'Requested resource does not exist',
           404,
         ),
       );
@@ -116,7 +116,7 @@ export const errorHandler = (
         formatErrorResponse(
           ERROR_TYPES.AUTHENTICATION_ERROR,
           AUTHENTICATION_ERROR_CODES.INVALID_TOKEN,
-          '未授权访问，请登录',
+          'Unauthorized access, please login',
           401,
         ),
       );
@@ -124,7 +124,7 @@ export const errorHandler = (
 
   // 默认服务器错误
   const statusCode = error.statusCode || 500;
-  const message = statusCode === 500 ? '服务器内部错误' : error.message || '未知错误';
+  const message = statusCode === 500 ? 'Internal server error' : error.message || 'Unknown error';
 
   // 根据状态码确定错误类型
   let errorType: ErrorType = ERROR_TYPES.SERVER_ERROR;

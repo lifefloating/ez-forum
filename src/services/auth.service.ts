@@ -20,7 +20,7 @@ export const authService = {
         statusCode: 409,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
-        message: '用户名已被使用',
+        message: 'Username already in use',
         param: 'username',
       });
     }
@@ -35,7 +35,7 @@ export const authService = {
         statusCode: 409,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
-        message: '邮箱已被注册',
+        message: 'Email already in use',
         param: 'email',
       });
     }

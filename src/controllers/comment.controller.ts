@@ -33,7 +33,7 @@ export const commentController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '评论不存在',
+        message: 'Comment does not exist',
       });
     }
 
@@ -65,7 +65,7 @@ export const commentController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -92,7 +92,7 @@ export const commentController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-        message: '评论内容不能为空',
+        message: 'Content cannot be empty',
         param: 'content',
       });
     }
@@ -104,7 +104,7 @@ export const commentController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -116,7 +116,7 @@ export const commentController = {
           statusCode: 404,
           type: ERROR_TYPES.RESOURCE_ERROR,
           code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-          message: '要回复的评论不存在',
+          message: 'Parent comment does not exist',
           param: 'parentId',
         });
       }
@@ -127,7 +127,7 @@ export const commentController = {
           statusCode: 400,
           type: ERROR_TYPES.INVALID_REQUEST_ERROR,
           code: REQUEST_ERROR_CODES.INVALID_PARAMETERS,
-          message: '评论回复必须属于同一帖子',
+          message: 'Reply to comment must be in the same thread as parent comment',
           param: 'parentId',
         });
       }
@@ -144,7 +144,7 @@ export const commentController = {
           statusCode: 404,
           type: ERROR_TYPES.RESOURCE_ERROR,
           code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-          message: '回复的用户不存在',
+          message: 'Reply to comment does not exist',
           param: 'replyToId',
         });
       }
@@ -158,7 +158,7 @@ export const commentController = {
       replyToId,
     });
 
-    return reply.status(201).send(formatSuccessResponse(comment, '评论创建成功'));
+    return reply.status(201).send(formatSuccessResponse(comment, 'Comment created successfully'));
   },
 
   /**
@@ -174,7 +174,7 @@ export const commentController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-        message: '评论内容不能为空',
+        message: 'Content cannot be empty',
         param: 'content',
       });
     }
@@ -187,7 +187,7 @@ export const commentController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '评论不存在',
+        message: 'Comment does not exist',
       });
     }
 
@@ -197,14 +197,14 @@ export const commentController = {
         statusCode: 403,
         type: ERROR_TYPES.PERMISSION_ERROR,
         code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
-        message: '无权限修改此评论',
+        message: 'You can only update your own comments',
       });
     }
 
     // 更新评论
     const updatedComment = await commentService.updateComment(id, { content });
 
-    return reply.send(formatSuccessResponse(updatedComment, '评论更新成功'));
+    return reply.send(formatSuccessResponse(updatedComment, 'Comment updated successfully'));
   },
 
   /**
@@ -222,7 +222,7 @@ export const commentController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '评论不存在',
+        message: 'Comment does not exist',
       });
     }
 
@@ -232,7 +232,7 @@ export const commentController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.OPERATION_NOT_ALLOWED,
-        message: '该评论有回复，无法删除',
+        message: 'Cannot delete comment with replies',
       });
     }
 
@@ -248,14 +248,14 @@ export const commentController = {
         statusCode: 403,
         type: ERROR_TYPES.PERMISSION_ERROR,
         code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
-        message: '无权限删除此评论',
+        message: 'You can only delete your own comments',
       });
     }
 
     // 删除评论
     await commentService.deleteComment(id);
 
-    return reply.send(formatSuccessResponse(null, '评论删除成功'));
+    return reply.send(formatSuccessResponse(null, 'Comment deleted successfully'));
   },
 
   /**

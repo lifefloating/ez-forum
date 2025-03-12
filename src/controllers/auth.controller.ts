@@ -28,7 +28,7 @@ export const authController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-        message: '用户名、邮箱和密码不能为空',
+        message: 'Username, email and password are required',
       });
     }
 
@@ -38,7 +38,7 @@ export const authController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.VALUE_TOO_SHORT,
-        message: '密码长度不能少于6个字符',
+        message: 'Password must be at least 6 characters',
         param: 'password',
       });
     }
@@ -65,7 +65,7 @@ export const authController = {
           },
           token,
         },
-        '用户注册成功',
+        'User registration successful',
       ),
     );
   },
@@ -87,7 +87,7 @@ export const authController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-        message: '邮箱和密码不能为空',
+        message: 'Username or email and password are required',
       });
     }
 
@@ -98,7 +98,7 @@ export const authController = {
         statusCode: 401,
         type: ERROR_TYPES.AUTHENTICATION_ERROR,
         code: AUTHENTICATION_ERROR_CODES.INVALID_CREDENTIALS,
-        message: '邮箱或密码不正确',
+        message: 'Invalid username/email or password',
       });
     }
 
@@ -113,7 +113,7 @@ export const authController = {
         statusCode: 401,
         type: ERROR_TYPES.AUTHENTICATION_ERROR,
         code: AUTHENTICATION_ERROR_CODES.INVALID_CREDENTIALS,
-        message: '邮箱或密码不正确',
+        message: 'Invalid username/email or password',
       });
     }
 
@@ -136,7 +136,7 @@ export const authController = {
           },
           token,
         },
-        '登录成功',
+        'Login successful',
       ),
     );
   },
@@ -153,7 +153,7 @@ export const authController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '用户不存在',
+        message: 'User not found',
       });
     }
 
@@ -174,6 +174,6 @@ export const authController = {
    */
   async logout(_request: FastifyRequest, reply: FastifyReply) {
     // 由于使用JWT，服务端不需要做特殊处理，客户端只需要删除token即可
-    return reply.send(formatSuccessResponse(null, '退出登录成功'));
+    return reply.send(formatSuccessResponse(null, 'Logout successful'));
   },
 };

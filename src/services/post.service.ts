@@ -294,7 +294,7 @@ export const postService = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.OPERATION_NOT_ALLOWED,
-        message: '已经点赞过该帖子',
+        message: 'You have already liked this post',
       });
     }
 
@@ -325,7 +325,7 @@ export const postService = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.OPERATION_NOT_ALLOWED,
-        message: '尚未点赞该帖子',
+        message: 'You have not liked this post',
       });
     }
 

@@ -36,7 +36,7 @@ export const userService = {
           statusCode: 409,
           type: ERROR_TYPES.RESOURCE_ERROR,
           code: RESOURCE_ERROR_CODES.RESOURCE_ALREADY_EXISTS,
-          message: '用户名已被使用',
+          message: 'Username already in use',
           param: 'username',
         });
       }

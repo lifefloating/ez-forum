@@ -18,7 +18,7 @@ export const userController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '用户不存在',
+        message: 'User does not exist',
       });
     }
 
@@ -57,7 +57,7 @@ export const userController = {
           avatar: updatedUser.avatar,
           bio: updatedUser.bio,
         },
-        '用户信息更新成功',
+        'User information update successful',
       ),
     );
   },

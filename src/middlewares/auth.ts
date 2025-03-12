@@ -13,7 +13,7 @@ export const authenticate = async (request: FastifyRequest) => {
       statusCode: 401,
       type: ERROR_TYPES.AUTHENTICATION_ERROR,
       code: AUTHENTICATION_ERROR_CODES.MISSING_TOKEN,
-      message: '请先登录',
+      message: 'Authentication required',
     });
   }
 };
@@ -30,7 +30,7 @@ export const authorizeAdmin = async (request: FastifyRequest) => {
       statusCode: 403,
       type: ERROR_TYPES.PERMISSION_ERROR,
       code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
-      message: '无访问权限，需要管理员权限',
+      message: 'Admin privileges required',
     });
   }
 };

@@ -38,7 +38,7 @@ export const adminController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -88,7 +88,7 @@ export const adminController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '用户不存在',
+        message: 'User does not exist',
       });
     }
 

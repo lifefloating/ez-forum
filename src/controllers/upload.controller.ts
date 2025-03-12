@@ -17,7 +17,7 @@ export const uploadController = {
           statusCode: 400,
           type: ERROR_TYPES.INVALID_REQUEST_ERROR,
           code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-          message: '没有找到上传的文件',
+          message: 'No file uploaded',
         });
       }
 
@@ -38,8 +38,7 @@ export const uploadController = {
           statusCode: 400,
           type: ERROR_TYPES.INVALID_REQUEST_ERROR,
           code: REQUEST_ERROR_CODES.INVALID_FILE_TYPE,
-          message: '不支持的文件类型',
-          param: 'file',
+          message: 'Invalid file type, only images are allowed',
         });
       }
 
@@ -50,8 +49,7 @@ export const uploadController = {
           statusCode: 400,
           type: ERROR_TYPES.INVALID_REQUEST_ERROR,
           code: REQUEST_ERROR_CODES.FILE_TOO_LARGE,
-          message: '文件大小不能超过5MB',
-          param: 'file',
+          message: 'File size exceeds the limit (5MB)',
         });
       }
 
@@ -65,7 +63,7 @@ export const uploadController = {
             filename: file.filename,
             mimetype: file.mimetype,
           },
-          '文件上传成功',
+          'File upload successful',
         ),
       );
     } catch (error) {
@@ -76,7 +74,7 @@ export const uploadController = {
         statusCode: 500,
         type: ERROR_TYPES.SERVER_ERROR,
         code: SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR,
-        message: '文件上传失败',
+        message: 'File upload failed',
       });
     }
   },

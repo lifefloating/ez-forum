@@ -234,7 +234,7 @@ export const commentService = {
       });
 
       if (!post) {
-        throw new Error('帖子不存在');
+        throw new Error('Post does not exist');
       }
 
       // 2. 创建评论
@@ -269,7 +269,7 @@ export const commentService = {
     });
 
     if (!comment) {
-      throw new Error('评论不存在');
+      throw new Error('Comment does not exist');
     }
 
     // 使用事务来更新评论，同时保留帖子的原始更新时间
@@ -281,7 +281,7 @@ export const commentService = {
       });
 
       if (!post) {
-        throw new Error('帖子不存在');
+        throw new Error('Post does not exist');
       }
 
       // 2. 更新评论
@@ -320,7 +320,7 @@ export const commentService = {
     });
 
     if (!comment) {
-      throw new Error('评论不存在');
+      throw new Error('Comment does not exist');
     }
 
     // 使用事务来删除评论，同时保留帖子的原始更新时间
@@ -332,7 +332,7 @@ export const commentService = {
       });
 
       if (!post) {
-        throw new Error('帖子不存在');
+        throw new Error('Post does not exist');
       }
 
       // 2. 删除评论

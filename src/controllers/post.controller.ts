@@ -80,7 +80,7 @@ export const postController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -102,7 +102,7 @@ export const postController = {
         statusCode: 400,
         type: ERROR_TYPES.INVALID_REQUEST_ERROR,
         code: REQUEST_ERROR_CODES.MISSING_REQUIRED_FIELD,
-        message: '标题和内容不能为空',
+        message: 'Title and content cannot be empty',
       });
     }
 
@@ -113,7 +113,7 @@ export const postController = {
       authorId: userId,
     });
 
-    return reply.status(201).send(formatSuccessResponse(post, '帖子创建成功'));
+    return reply.status(201).send(formatSuccessResponse(post, 'Post created successfully'));
   },
 
   /**
@@ -132,7 +132,7 @@ export const postController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -142,7 +142,7 @@ export const postController = {
         statusCode: 403,
         type: ERROR_TYPES.PERMISSION_ERROR,
         code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
-        message: '无权限修改此帖子',
+        message: 'You can only update your own posts',
       });
     }
 
@@ -153,7 +153,7 @@ export const postController = {
       images,
     });
 
-    return reply.send(formatSuccessResponse(updatedPost, '帖子更新成功'));
+    return reply.send(formatSuccessResponse(updatedPost, 'Post updated successfully'));
   },
 
   /**
@@ -171,7 +171,7 @@ export const postController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
@@ -181,14 +181,14 @@ export const postController = {
         statusCode: 403,
         type: ERROR_TYPES.PERMISSION_ERROR,
         code: PERMISSION_ERROR_CODES.INSUFFICIENT_PERMISSIONS,
-        message: '无权限删除此帖子',
+        message: 'You can only delete your own posts',
       });
     }
 
     // 删除帖子
     await postService.deletePost(id);
 
-    return reply.send(formatSuccessResponse(null, '帖子删除成功'));
+    return reply.send(formatSuccessResponse(null, 'Post deleted successfully'));
   },
 
   /**
@@ -206,14 +206,14 @@ export const postController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
     // 添加点赞
     await postService.likePost(id, userId);
 
-    return reply.send(formatSuccessResponse(null, '点赞成功'));
+    return reply.send(formatSuccessResponse(null, 'Like added successfully'));
   },
 
   /**
@@ -231,14 +231,14 @@ export const postController = {
         statusCode: 404,
         type: ERROR_TYPES.RESOURCE_ERROR,
         code: RESOURCE_ERROR_CODES.RESOURCE_NOT_FOUND,
-        message: '帖子不存在',
+        message: 'Post does not exist',
       });
     }
 
     // 移除点赞
     await postService.unlikePost(id, userId);
 
-    return reply.send(formatSuccessResponse(null, '取消点赞成功'));
+    return reply.send(formatSuccessResponse(null, 'Like removed successfully'));
   },
 
   /**
