@@ -14,13 +14,13 @@ services:
       - NODE_ENV=production
       - PORT=3009
       - HOST=0.0.0.0
-      - DATABASE_URL=mongodb://mongo:27017/ez-forum
+      - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRES_IN=7d
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
       - OSS_ACCESS_KEY_ID=${OSS_ACCESS_KEY_ID}
       - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
       - OSS_BUCKET=${OSS_BUCKET}
-      - LOG_LEVEL=info
+      - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ./logs:/app/logs
       - ./public:/app/public
