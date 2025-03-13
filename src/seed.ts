@@ -5,7 +5,7 @@ import crypto from 'crypto';
 const prisma = new PrismaClient();
 
 // 密码加密函数
-function hashPassword(password) {
+function hashPassword(password: string) {
   // 生成随机盐值
   const salt = crypto.randomBytes(16).toString('hex');
   // 使用 PBKDF2 算法进行密码哈希
