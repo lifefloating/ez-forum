@@ -43,7 +43,7 @@ RUN pnpm install --prod
 # 从构建阶段复制构建产物和必要文件
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 # 创建日志和上传目录
 RUN mkdir -p logs
