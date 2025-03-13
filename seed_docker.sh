@@ -1,0 +1,1 @@
+docker exec -it ez-forum-api node dist/seed.js
