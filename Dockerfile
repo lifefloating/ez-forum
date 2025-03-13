@@ -46,7 +46,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # 创建日志和上传目录
-RUN mkdir -p logs public/uploads
+RUN mkdir -p logs
 
 # 暴露端口
 EXPOSE 3009
