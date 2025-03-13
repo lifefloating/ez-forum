@@ -11,7 +11,7 @@
     "build": "tsc -p tsconfig.json && cp .env dist/ ",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "prisma:generate": "prisma generate && tsx prisma/seed.ts",
+    "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "docker:build": "docker build -t ez-forum .",
     "docker:run": "docker run -p 3009:3009 ez-forum",
