@@ -26,11 +26,10 @@ services:
       - ./public:/app/public
     depends_on:
       - mongo
-    command: sh -c "node dist/seed.js"  # 启动时运行种子脚本
     networks:
       - ez-forum-network
 
-  # MongoDB服务
+  # MongoDB 服务
   mongo:
     image: mongo:latest
     container_name: ez-forum-mongo
@@ -43,6 +42,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=ez-forum
+    networks:
+      - ez-forum-network
 
 volumes:
   mongo-data:
