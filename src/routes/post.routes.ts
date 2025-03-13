@@ -102,6 +102,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                   title: { type: 'string' },
                   content: { type: 'string' },
                   images: { type: 'array', items: { type: 'string' } },
+                  imagesKeys: { type: 'array', items: { type: 'string' } },
                   views: { type: 'integer' },
                   createdAt: { type: 'string', format: 'date-time' },
                   updatedAt: { type: 'string', format: 'date-time' },

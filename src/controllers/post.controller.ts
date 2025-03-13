@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { CreatePostRequest, PaginationQuery, UpdatePostRequest } from '../types';
 import { ApiError, formatSuccessResponse } from '../middlewares/errorHandler';
 import { postService } from '../services/post.service';
+import { convertToOssReference } from '../utils/storage';
 import {
   ERROR_TYPES,
   RESOURCE_ERROR_CODES,
@@ -87,7 +88,17 @@ export const postController = {
     // 增加帖子浏览量
     await postService.incrementViews(id);
 
-    return reply.send(formatSuccessResponse(post));
+    // 为每个图片URL生成引用格式，添加到imagesKeys字段
+    const postWithKeys = post as any;
+    if (post.images && Array.isArray(post.images)) {
+      postWithKeys.imagesKeys = await Promise.all(
+        post.images.map(async (imageUrl) => convertToOssReference(imageUrl)),
+      );
+    } else {
+      postWithKeys.imagesKeys = [];
+    }
+
+    return reply.send(formatSuccessResponse(postWithKeys));
   },
 
   /**
