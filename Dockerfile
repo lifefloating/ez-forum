@@ -37,18 +37,11 @@ ENV NODE_ENV=production
 # 复制package.json和pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml* ./
 
-# 只安装生产依赖
-RUN pnpm install --prod
-
 # 从构建阶段复制构建产物和必要文件
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/@prisma+client*
-COPY --from=builder /app/node_modules/.pnpm/prisma* ./node_modules/.pnpm/prisma*
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules ./node_modules
 
-# 创建日志和上传目录
 RUN mkdir -p logs
 
 # 暴露端口
