@@ -17,10 +17,9 @@ services:
       - DATABASE_URL=mongodb://mongo:27017/ez-forum
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=7d
-      - COS_SECRET_ID=${COS_SECRET_ID}
-      - COS_SECRET_KEY=${COS_SECRET_KEY}
-      - COS_REGION=${COS_REGION}
-      - COS_BUCKET=${COS_BUCKET}
+      - OSS_ACCESS_KEY_ID=${OSS_ACCESS_KEY_ID}
+      - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
+      - OSS_BUCKET=${OSS_BUCKET}
       - LOG_LEVEL=info
     volumes:
       - ./logs:/app/logs
