@@ -48,14 +48,15 @@ services:
     volumes:
       - mongo-data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
-      - ./mongo-keyfile:/etc/mongo-keyfile
+      - ./mongo-keyfile:/etc/mongo-keyfile:ro
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=ez-forum
-    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile"]
+    command: ["--replSet", "rs0", "--bind_ip_all", "--keyFile", "/etc/mongo-keyfile/mongodb-keyfile"]
     networks:
       - ez-forum-network
+    user: "999:999"
 
   # MongoDB 副本集初始化服务
   mongo-init:
@@ -79,6 +80,7 @@ services:
       - ./mongo-keyfile:/mongo-keyfile
     command: >
       bash -c "openssl rand -base64 756 > /mongo-keyfile/mongodb-keyfile && chmod 400 /mongo-keyfile/mongodb-keyfile && chown 999:999 /mongo-keyfile/mongodb-keyfile"
+    user: "root"
 
 volumes:
   mongo-data:
