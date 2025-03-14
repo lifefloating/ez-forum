@@ -64,6 +64,10 @@ docker compose down
 ```bash
 docker compose ps
 ```
+#### 更新服务
+```bash
+docker compose build app
+```
 
 ## 2. 前端部署 (Nginx)
 
