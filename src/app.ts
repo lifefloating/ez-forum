@@ -26,7 +26,8 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // 注册插件
   await app.register(cors, {
-    origin: true,
+    origin: ['*'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
 
@@ -44,7 +45,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   await app.register(multipart, {
     limits: {
-      fileSize: 5 * 1024 * 1024, // 限制文件大小为5MB
+      fileSize: 50 * 1024 * 1024, // 限制文件大小为50MB
     },
   });
 
