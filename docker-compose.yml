@@ -81,6 +81,27 @@ services:
     command: >
       bash -c "openssl rand -base64 756 > /mongo-keyfile/mongodb-keyfile && chmod 400 /mongo-keyfile/mongodb-keyfile && chown 999:999 /mongo-keyfile/mongodb-keyfile"
     user: "root"
+    
+  # 种子数据服务
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ez-forum-seed
+    restart: "no"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+    command: >
+      bash -c "sleep 20 && node dist/seed.js"
+    depends_on:
+      - app
+      - mongo
+      - mongo-init
+    networks:
+      - ez-forum-network
 
 volumes:
   mongo-data:
