@@ -29,7 +29,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     origin: ['*'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin'],
-    credentials: true,
+    // credentials: true,
   });
 
   await app.register(jwt, {
