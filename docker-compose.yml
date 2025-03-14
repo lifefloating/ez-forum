@@ -38,7 +38,7 @@ services:
     networks:
       - ez-forum-network
 
-  # MongoDB 服务
+  # MongoDB 服务 - 配置为副本集模式
   mongo:
     image: mongo:latest
     container_name: ez-forum-mongo
@@ -47,10 +47,26 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=ez-forum
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    networks:
+      - ez-forum-network
+
+  # MongoDB 副本集初始化服务
+  mongo-init:
+    image: mongo:latest
+    restart: "no"
+    depends_on:
+      - mongo
+    command: >
+      bash -c "sleep 10 && mongosh --host mongo:27017 -u $${MONGO_USERNAME} -p $${MONGO_PASSWORD} --authenticationDatabase admin --eval 'rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"mongo:27017\"}]})'"
+    environment:
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
     networks:
       - ez-forum-network
 
