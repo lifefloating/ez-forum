@@ -94,8 +94,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
-    command: >
-      bash -c "sleep 20 && node dist/seed.js"
+    command: ["sh", "-c", "sleep 20 && node dist/seed.js"]
     depends_on:
       - app
       - mongo
