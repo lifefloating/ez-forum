@@ -17,6 +17,7 @@
   <a href="https://www.prisma.io/"><img src="https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma Badge"/></a>
   <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB Badge"/></a>
   <a href="https://cloud.tencent.com/product/cos"><img src="https://img.shields.io/badge/腾讯云COS-3699FF?style=flat-square&logo=tencent-cloud&logoColor=white" alt="Tencent Cloud COS Badge"/></a>
+  <a href="https://www.aliyun.com/product/oss"><img src="https://img.shields.io/badge/阿里云OSS-FF6A00?style=flat-square&logo=alibaba-cloud&logoColor=white" alt="Alibaba Cloud OSS Badge"/></a>
   <a href="https://swagger.io/"><img src="https://img.shields.io/badge/OpenAPI-85EA2D?style=flat-square&logo=swagger&logoColor=black" alt="OpenAPI Badge"/></a>
   <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker Badge"/></a>
 
