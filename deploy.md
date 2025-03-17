@@ -86,6 +86,13 @@ server {
     location / {
         try_files $uri $uri/ /index.html;
     }
+
+     # admin
+    location /admin/ {
+        alias /var/www/admin/;
+        index index.html;
+        try_files $uri $uri/ /admin/index.html;
+    }
     
     location /api/ {
         proxy_pass http://localhost:3009;
