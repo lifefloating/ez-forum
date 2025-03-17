@@ -23,12 +23,6 @@ services:
       - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
       - OSS_BUCKET=${OSS_BUCKET}
       - OSS_REGION=${OSS_REGION}
-      - ADMIN_USERNAME=${ADMIN_USERNAME}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - SECOND_ADMIN_USERNAME=${SECOND_ADMIN_USERNAME}
-      - SECOND_ADMIN_EMAIL=${SECOND_ADMIN_EMAIL}
-      - SECOND_ADMIN_PASSWORD=${SECOND_ADMIN_PASSWORD}
       - LOG_LEVEL=${LOG_LEVEL}
     volumes:
       - ./logs:/app/logs
@@ -100,7 +94,7 @@ services:
       - SECOND_ADMIN_USERNAME=${SECOND_ADMIN_USERNAME}
       - SECOND_ADMIN_EMAIL=${SECOND_ADMIN_EMAIL}
       - SECOND_ADMIN_PASSWORD=${SECOND_ADMIN_PASSWORD}
-    command: ["sh", "-c", "sleep 20 && node dist/seed.js"]
+    command: ["sh", "-c", "sleep 30 && node dist/seed.js"]
     depends_on:
       - app
       - mongo
